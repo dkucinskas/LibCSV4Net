@@ -1,11 +1,11 @@
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using LibCSV;
 using LibCSV.Dialects;
-using System.Collections;
 using LibCSV.Exceptions;
 
 namespace LibCSV

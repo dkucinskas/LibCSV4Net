@@ -4,6 +4,9 @@ Library for reading and writing tabular (CSV) files.
 
 ## Cahnges
 
+### 0.4
+ * Added CSVWriter
+
 ### 0.3
  * Changed IResultTransformer interface
   * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
