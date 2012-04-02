@@ -1,6 +1,6 @@
 # LibCSV
 
-Little library for reading of CSV files.
+Library for reading and writing tabular (CSV) files.
 
 ## Cahnges
 
