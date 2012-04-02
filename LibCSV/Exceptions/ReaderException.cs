@@ -8,14 +8,14 @@ namespace LibCSV.Exceptions
 	{
 		public ReaderException()
 			: base("CSVReader internal error!")
-		{ 
+		{
 		}
 
 		public ReaderException(string message)
 			: base(message)
 		{
 		}
-		
+
 		public ReaderException(string message, Exception innerException)
 			: base(message, innerException)
 		{
@@ -23,7 +23,7 @@ namespace LibCSV.Exceptions
 
 		protected ReaderException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
-		{ 
+		{
 		}
 	}
 }

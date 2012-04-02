@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using LibCSV;
 using LibCSV.Dialects;
 using NUnit.Framework;
-using System;
 
 namespace TestLibCSV
 {
@@ -14,12 +14,12 @@ namespace TestLibCSV
 			if (list != null && list.Count > 0)
 			{
 				int count = list.Count;
-				for(int i = 0; i < count; i++)
+				for (int i = 0; i < count; i++)
 				{
 					if (list[i] != null && list[i].Count > 0)
 					{
 						int countInner = list[i].Count;
-						for(int j = 0; j < count; j++)
+						for (int j = 0; j < count; j++)
 						{
 							if (list[i][j] != null)
 							{
@@ -37,12 +37,12 @@ namespace TestLibCSV
 				}
 			}
 		}
-		
+
 		public static void ReadTest(string input, IList<IList<object>> expect, Dialect dialect)
 		{
 			IList<IList<object>> results = new List<IList<object>>();
 			using (CSVReader reader = new CSVReader(dialect, new StringReader(input)))
-			{								
+			{
 				while (reader.NextRecord())
 				{
 					string[] record = reader.GetCurrentRecord();
@@ -51,12 +51,12 @@ namespace TestLibCSV
 					record = null;
 				}
 			}
-			
+
 			Assert.AreEqual(expect, results);
-			
+
 			DisposeIListOfIListOfObjects(results);
 			results = null;
-			
+
 			DisposeIListOfIListOfObjects(expect);
 			expect = null;
 		}

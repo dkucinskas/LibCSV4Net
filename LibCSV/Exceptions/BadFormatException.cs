@@ -8,14 +8,14 @@ namespace LibCSV.Exceptions
 	{
 		public BadFormatException()
 			: base("Bad format!")
-		{ 
+		{
 		}
 
 		public BadFormatException(string message)
 			: base(message)
 		{
 		}
-		
+
 		public BadFormatException(string message, Exception innerException)
 			: base(message, innerException)
 		{
@@ -23,7 +23,7 @@ namespace LibCSV.Exceptions
 
 		protected BadFormatException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
-		{ 
+		{
 		}
 	}
 }

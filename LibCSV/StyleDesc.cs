@@ -1,4 +1,3 @@
-using System;
 
 namespace LibCSV
 {
@@ -6,7 +5,7 @@ namespace LibCSV
 	{
 		public QuoteStyle style;
 		public string name;
-		
+
 		public StyleDesc(QuoteStyle style, string name)
 		{
 			this.style = style;

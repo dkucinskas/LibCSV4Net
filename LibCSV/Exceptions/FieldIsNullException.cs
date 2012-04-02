@@ -8,14 +8,14 @@ namespace LibCSV.Exceptions
 	{
 		public FieldIsNullException()
 			: base("Field is null!")
-		{ 
+		{
 		}
 
 		public FieldIsNullException(string message)
 			: base(message)
 		{
 		}
-		
+
 		public FieldIsNullException(string message, Exception innerException)
 			: base(message, innerException)
 		{
@@ -23,7 +23,7 @@ namespace LibCSV.Exceptions
 
 		protected FieldIsNullException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
-		{ 
+		{
 		}
 	}
 }
