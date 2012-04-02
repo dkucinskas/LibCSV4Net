@@ -9,21 +9,21 @@ namespace LibCSV
 		public WriterException()
 		{
 		}
-		
-		public WriterException(string message) 
-			: base (message)
+
+		public WriterException(string message)
+			: base(message)
 		{
 		}
-		
-		public WriterException(string message, Exception inner) 
-			: base (message, inner)
+
+		public WriterException(string message, Exception inner)
+			: base(message, inner)
 		{
 		}
-		
-		protected WriterException(SerializationInfo info, StreamingContext context) 
-			: base (info, context)
+
+		protected WriterException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
 		{
-			
+
 		}
 	}
 }

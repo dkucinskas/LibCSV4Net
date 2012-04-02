@@ -15,7 +15,7 @@ namespace LibCSV.Dialects
 			new StyleDesc(QuoteStyle.QUOTE_NONNUMERIC, "QUOTE_NONNUMERIC"),
 			new StyleDesc(QuoteStyle.QUOTE_NONE, "QUOTE_NONE")
 		};
-		
+
 		private bool _doubleQuote;  /* is " represented by ""? */
 		private char _delimiter = '\0'; /* field separator */
 		private char _quote; /* quote character */
@@ -28,13 +28,13 @@ namespace LibCSV.Dialects
 		private bool _hasHeader = false;
 		private bool _disposed = false;
 
-		public Dialect ()
-			:this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false)
+		public Dialect()
+			: this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false)
 		{
 		}
 
-		public Dialect (bool doubleQuote, char delimiter, char quote, char escape, 
-			bool skipInitialSpace, string lineTerminator, QuoteStyle quoting, 
+		public Dialect(bool doubleQuote, char delimiter, char quote, char escape,
+			bool skipInitialSpace, string lineTerminator, QuoteStyle quoting,
 			bool strict, bool hasHeader)
 		{
 			_doubleQuote = doubleQuote;
@@ -46,62 +46,62 @@ namespace LibCSV.Dialects
 			_quoting = quoting;
 			_strict = strict;
 			_hasHeader = hasHeader;
-			
+
 			if (_delimiter == '\0')
 				_error = "Delimiter must be set";
-			
+
 			if (CheckQuoting() == false)
 				_error = "Bad \"quoting\" value";
-			
+
 			if (_quoting != QuoteStyle.QUOTE_NONE && _quote == '\0')
 				_error = "Quotechar must be set if quoting enabled";
-			
+
 			if (_lineTerminator == null)
 				_error = "Line terminator must be set";
 		}
-		
+
 		public bool DoubleQuote
 		{
 			get { return _doubleQuote; }
 			protected set { _doubleQuote = value; }
 		}
-		
+
 		public string LineTerminator
 		{
 			get { return _lineTerminator; }
 			protected set { _lineTerminator = value; }
 		}
-		
+
 		public char Delimiter
 		{
 			get { return _delimiter; }
 			protected set { _delimiter = value; }
 		}
-		
+
 		public char Escape
 		{
 			get { return _escape; }
 			protected set { _escape = value; }
 		}
-		
+
 		public bool SkipInitialSpace
 		{
 			get { return _skipInitialSpace; }
 			protected set { _skipInitialSpace = value; }
 		}
-		
+
 		public char Quote
 		{
 			get { return _quote; }
 			protected set { _quote = value; }
 		}
-		
+
 		public QuoteStyle Quoting
 		{
 			get { return _quoting; }
 			protected set { _quoting = value; }
 		}
-		
+
 		public bool Strict
 		{
 			get { return _strict; }
@@ -110,8 +110,8 @@ namespace LibCSV.Dialects
 
 		public string Error
 		{
-			get	{ return this._error; }
-			protected set	{ _error = value; }
+			get { return this._error; }
+			protected set { _error = value; }
 		}
 
 		public bool HasHeader
@@ -119,25 +119,25 @@ namespace LibCSV.Dialects
 			get { return _hasHeader; }
 			set { _hasHeader = value; }
 		}
-		
+
 		public bool IsDisposed
 		{
 			get { return _disposed; }
 			private set { _disposed = value; }
 		}
-		
+
 		public bool CheckQuoting()
 		{
 			int count = QuoteStyles.Count;
-			for(int i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				if (QuoteStyles[i].style == _quoting)
 					return true;
 			}
-			
+
 			return false;
 		}
-		
+
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
@@ -147,17 +147,17 @@ namespace LibCSV.Dialects
 					_lineTerminator = null;
 					_error = null;
 				}
-				
-				IsDisposed = true;				
+
+				IsDisposed = true;
 			}
 		}
-		
+
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-		
+
 		~Dialect()
 		{
 			Dispose(false);

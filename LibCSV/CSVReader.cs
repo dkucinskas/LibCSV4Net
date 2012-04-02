@@ -1,10 +1,7 @@
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using LibCSV;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
 
@@ -14,22 +11,22 @@ namespace LibCSV
 	/// Reader objects are responsible for reading and parsing tabular data
 	/// in CSV format. Supports only basic read operation: read next record.
 	public class CSVReader : IDisposable
-	{	
+	{
 		internal const int MAX_CAPACITY = 8000;// 8000 * 2 ~4GB max memory for process in 32bit OS
 		internal const int DEFAULT_CAPACITY = 16;
 
-		private TextReader _reader =  null;
+		private TextReader _reader = null;
 		private Dialect _dialect = null;
 		private IList<string> _fields = null;
-		
+
 		private ParserState _state;
-		
+
 		private char[] _buffer = null;
 		private int _capacity = 0;
 		private int _fieldLength = 0;
-		
+
 		private bool _disposed = false;
-		
+
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
 			if (dialect != null)
@@ -45,24 +42,24 @@ namespace LibCSV
 				_reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
 			}
 		}
-		
+
 		public CSVReader(Dialect dialect, TextReader reader)
 		{
 			if (dialect != null)
 				_dialect = dialect;
 
 			GrowBuffer();
-			
+
 			if (reader != null)
 				_reader = reader;
 		}
 
-		public Dialect Dialect 
+		public Dialect Dialect
 		{
 			get { return this._dialect; }
 			set { _dialect = value; }
 		}
-		
+
 		public bool IsDisposed
 		{
 			get { return _disposed; }
@@ -73,12 +70,12 @@ namespace LibCSV
 		{
 			if (_buffer == null)
 				throw new FieldIsNullException();
-			
-			_fields.Add(new string(_buffer, 0, _fieldLength));								
-			_fieldLength = 0;			
+
+			_fields.Add(new string(_buffer, 0, _fieldLength));
+			_fieldLength = 0;
 			Array.Clear(_buffer, 0, _capacity);
 		}
-		
+
 		protected void GrowBuffer()
 		{
 			if (_capacity == 0)
@@ -86,26 +83,26 @@ namespace LibCSV
 				_capacity = DEFAULT_CAPACITY;
 				_buffer = new char[_capacity];
 			}
-			else 
+			else
 			{
 				_capacity *= 2;
 				Array.Resize(ref _buffer, _capacity);
 			}
-			
+
 			if (_buffer == null)
 				throw new ReaderException("Can't grow buffer.");
 		}
-		
+
 		protected void AddChar(char character)
 		{
 			if (_fieldLength >= MAX_CAPACITY)
-			 	throw new ArgumentOutOfRangeException(string.Format("Field is larger than field limit ({0})", MAX_CAPACITY));
-			
+				throw new ArgumentOutOfRangeException(string.Format("Field is larger than field limit ({0})", MAX_CAPACITY));
+
 			if (_fieldLength == _capacity)
 			{
 				GrowBuffer();
 			}
-			
+
 			_buffer[_fieldLength] = character;
 			_fieldLength++;
 		}
@@ -124,7 +121,7 @@ namespace LibCSV
 		{
 			return (IsNull(character) || IsEndOfLine(character));
 		}
-		
+
 		protected void ProcessChar(char currentCharacter)
 		{
 			switch (_state)
@@ -205,7 +202,7 @@ namespace LibCSV
 		{
 			if (IsNull(currentCharacter))
 				currentCharacter = '\n';
-			
+
 			AddChar(currentCharacter);
 			_state = ParserState.InQuotedField;
 		}
@@ -262,7 +259,7 @@ namespace LibCSV
 		{
 			if (IsNull(currentCharacter))
 				currentCharacter = '\n';
-			
+
 			AddChar(currentCharacter);
 			_state = ParserState.InField;
 		}
@@ -295,58 +292,58 @@ namespace LibCSV
 				_state = ParserState.InField;
 			}
 		}
-				
+
 		protected void Reset()
 		{
-			_fields = new List<string>();			
+			_fields = new List<string>();
 			_fieldLength = 0;
 			_state = ParserState.StartOfRecord;
 		}
-		
+
 		public bool NextRecord()
-		{			
+		{
 			if (_reader == null)
 				throw new TextReaderIsNullException();
-			
+
 			if (_dialect == null)
 				throw new DialectIsNullException();
 
 			if (!string.IsNullOrEmpty(_dialect.Error))
 				throw new DialectInternalErrorException("Dialect error: " + _dialect.Error);
-			
+
 			string line = null;
 			char c = '\0';
 			long length = 0;
-			
+
 			Reset();
-			
+
 			line = _reader.ReadLine();
 			if (string.IsNullOrEmpty(line))
-					return false;
-			
+				return false;
+
 			length = line.Length;
 			if (length < 0)
 				return false;
-			
-			for(int i = 0; i < length; i++)
+
+			for (int i = 0; i < length; i++)
 			{
 				c = line[i];
-				
+
 				if (IsNull(c))
 					throw new BadFormatException("Line contains NULL byte!");
 
 				ProcessChar(c);
 			}
-			
+
 			SaveField();
-			return true;			
+			return true;
 		}
-		
+
 		public string[] GetCurrentRecord()
 		{
 			if (_fields == null)
 				return null;
-			
+
 			string[] results = new string[_fields.Count];
 			_fields.CopyTo(results, 0);
 			return results;
@@ -362,23 +359,23 @@ namespace LibCSV
 					{
 						_reader.Dispose();
 					}
-					_reader =  null;
+					_reader = null;
 
 					_dialect = null;
 					_fields = null;
 					_buffer = null;
 				}
-				
-				IsDisposed = true;				
+
+				IsDisposed = true;
 			}
 		}
-		
+
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-		
+
 		~CSVReader()
 		{
 			Dispose(false);
