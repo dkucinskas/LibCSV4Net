@@ -7,6 +7,6 @@ namespace LibCSV
 		object TransformTuple(object[] tuple, string[] aliases);
 		IEnumerable TransformResult(IEnumerable result);
 
-		string[] TransformRow(object tuple);
+		object[] TransformRow(object tuple);
 	}
 }

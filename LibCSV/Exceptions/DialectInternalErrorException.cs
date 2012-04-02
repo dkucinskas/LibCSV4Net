@@ -8,14 +8,14 @@ namespace LibCSV.Exceptions
 	{
 		public DialectInternalErrorException()
 			: base("Dialect internal error!")
-		{ 
+		{
 		}
 
 		public DialectInternalErrorException(string message)
 			: base(message)
 		{
 		}
-		
+
 		public DialectInternalErrorException(string message, Exception innerException)
 			: base(message, innerException)
 		{
@@ -23,7 +23,7 @@ namespace LibCSV.Exceptions
 
 		protected DialectInternalErrorException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
-		{ 
+		{
 		}
 	}
 }

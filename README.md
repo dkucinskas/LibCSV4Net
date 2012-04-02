@@ -4,6 +4,10 @@ Library for reading and writing tabular (CSV) files.
 
 ## Cahnges
 
+### 0.5
+ * Improved CSVAdapter
+ * Transformer supports transforming result for writing
+
 ### 0.4
  * Added CSVWriter
 

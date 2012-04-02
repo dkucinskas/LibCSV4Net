@@ -1,15 +1,14 @@
-using System;
 
 namespace LibCSV
 {
 	public enum ParserState
 	{
-		StartOfRecord, 
-		StartOfField, 
-		EscapedCharacter, 
+		StartOfRecord,
+		StartOfField,
+		EscapedCharacter,
 		InField,
-		InQuotedField, 
-		EscapeInQuotedField, 
+		InQuotedField,
+		EscapeInQuotedField,
 		QuoteInQuotedField,
 		EndOfRecord
 	}

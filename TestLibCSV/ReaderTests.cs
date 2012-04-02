@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using LibCSV;
 using LibCSV.Dialects;
-using NUnit.Framework;
 using LibCSV.Exceptions;
+using NUnit.Framework;
 
 namespace TestLibCSV
 {
@@ -16,12 +15,12 @@ namespace TestLibCSV
 		public void Reader_NullStream_ThrowException()
 		{
 			IList<IList<object>> results = new List<IList<object>>();
-			
+
 			using (Dialect dialect = new Dialect())
 			{
 				using (CSVReader reader = new CSVReader(dialect, null))
-				{	
-					while(reader.NextRecord())
+				{
+					while (reader.NextRecord())
 					{
 						string[] record = reader.GetCurrentRecord();
 						if (record != null && record.Length > 0)
@@ -100,7 +99,7 @@ namespace TestLibCSV
 				ReadTest("", new List<IList<object>>(), dialect);
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Bad format: ',' expected after '\"'")]
 		public void Reader_QuoteInFiledDoubleQuoteTrueStrictTrue_Null()
@@ -116,10 +115,10 @@ namespace TestLibCSV
 		{
 			using (Dialect dialect = new Dialect(false, ',', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false))
 			{
-				ReadTest("\"ab\"c", new List<IList<object>>(){new List<object>(){"abc"}}, dialect);
+				ReadTest("\"ab\"c", new List<IList<object>>() { new List<object>() { "abc" } }, dialect);
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Line contains NULL byte!")]
 		public void Reader_NullByte_ThrowException()
@@ -129,7 +128,7 @@ namespace TestLibCSV
 				ReadTest("ab\0c", null, dialect);
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Line contains NULL byte!")]
 		public void Reader_NullByteStrict_ThrowException()
@@ -139,33 +138,33 @@ namespace TestLibCSV
 				ReadTest("ab\0c", null, dialect);
 			}
 		}
-		
+
 		[Test]
 		public void Reader_EOL_Ok()
 		{
 			using (Dialect dialect = new Dialect())
 			{
-				ReadTest("a,b", new List<IList<object>>(){ new List<object>() { "a", "b" } }, dialect);
-				ReadTest("c,d\n", new List<IList<object>>(){ new List<object>() { "c", "d" } }, dialect);
-				ReadTest("e,f\r", new List<IList<object>>(){ new List<object>() { "e", "f" } }, dialect);
-				ReadTest("h,g\r\n", new List<IList<object>>(){ new List<object>() { "h", "g" } }, dialect);	
-				
+				ReadTest("a,b", new List<IList<object>>() { new List<object>() { "a", "b" } }, dialect);
+				ReadTest("c,d\n", new List<IList<object>>() { new List<object>() { "c", "d" } }, dialect);
+				ReadTest("e,f\r", new List<IList<object>>() { new List<object>() { "e", "f" } }, dialect);
+				ReadTest("h,g\r\n", new List<IList<object>>() { new List<object>() { "h", "g" } }, dialect);
+
 				ReadTest(
-					"a1,b1\nc1,d1", 
+					"a1,b1\nc1,d1",
 					new List<IList<object>>()
 					{ 
 						new List<object>() { "a1", "b1" }, 
 						new List<object>() {"c1", "d1"} 
-					}, 
+					},
 					dialect);
-				
+
 				ReadTest(
-					"a1,b1\rc1,d1", 
+					"a1,b1\rc1,d1",
 					new List<IList<object>>()
 					{ 
 						new List<object>() { "a1", "b1" }, 
 						new List<object>() {"c1", "d1"} 
-					}, 
+					},
 					dialect);
 			}
 		}
@@ -178,7 +177,7 @@ namespace TestLibCSV
 				ReadTest(" a, b, c", new List<IList<object>>() { new List<object>() { "a", "b", "c" } }, dialect);
 			}
 		}
-		
+
 		[Test]
 		public void Reader_SkipInitialSpaceFalse_Ok()
 		{
@@ -195,7 +194,7 @@ namespace TestLibCSV
 			{
 				ReadTest("a,\\b,c", new List<IList<object>>() { new List<object>() { "a", "b", "c" } }, dialect);
 			}
-			
+
 			using (Dialect dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false))
 			{
 				ReadTest("a,b\\,c", new List<IList<object>>() { new List<object>() { "a", "b,c" } }, dialect);
@@ -205,7 +204,7 @@ namespace TestLibCSV
 			{
 				ReadTest("a,\"b\\,c\"", new List<IList<object>>() { new List<object>() { "a", "b,c" } }, dialect);
 			}
-			
+
 			using (Dialect dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false))
 			{
 				ReadTest("a,\"b,\\c\"", new List<IList<object>>() { new List<object>() { "a", "b,c" } }, dialect);
@@ -221,7 +220,7 @@ namespace TestLibCSV
 				ReadTest("a,\"b,c\"\\", new List<IList<object>>() { new List<object>() { "a", "b,c\\" } }, dialect);
 			}
 		}
-		
+
 		[Test]
 		public void Reader_Quoting_Ok()
 		{
@@ -229,17 +228,17 @@ namespace TestLibCSV
 			{
 				ReadTest("1,\",3,\",5", new List<IList<object>>() { new List<object>() { "1", ",3,", "5" } }, dialect);
 			}
-			
+
 			using (Dialect dialect = new Dialect(true, ',', '\0', '\\', false, "\r\n", QuoteStyle.QUOTE_NONE, false, false))
 			{
-				ReadTest("1,\",3,\",5", new List<IList<object>>() { new List<object>() { "1", "\"", "3", "\"", "5" }  }, 
+				ReadTest("1,\",3,\",5", new List<IList<object>>() { new List<object>() { "1", "\"", "3", "\"", "5" } },
 					dialect);
 			}
-						
+
 			using (Dialect dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QUOTE_NONE, false, false))
 			{
-				ReadTest("1,\",3,\",5", new List<IList<object>>() { new List<object>() { "1", "\"", "3", "\"", "5" } }, 
-					dialect);			
+				ReadTest("1,\",3,\",5", new List<IList<object>>() { new List<object>() { "1", "\"", "3", "\"", "5" } },
+					dialect);
 			}
 		}
 

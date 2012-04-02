@@ -38,7 +38,7 @@ namespace TestLibCSV
 				return null;
 			}
 
-			public string[] TransformRow(object tuple)
+			public object[] TransformRow(object tuple)
 			{
 				if (_aliases != null && row == 0)
 					row++;

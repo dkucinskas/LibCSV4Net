@@ -8,14 +8,14 @@ namespace LibCSV.Exceptions
 	{
 		public DialectIsNullException()
 			: base("Dialect is null! Set Dialect before parssing!")
-		{ 
+		{
 		}
 
 		public DialectIsNullException(string message)
 			: base(message)
 		{
 		}
-		
+
 		public DialectIsNullException(string message, Exception innerException)
 			: base(message, innerException)
 		{
@@ -23,7 +23,7 @@ namespace LibCSV.Exceptions
 
 		protected DialectIsNullException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
-		{ 
+		{
 		}
 	}
 }

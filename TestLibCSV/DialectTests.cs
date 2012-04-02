@@ -1,25 +1,24 @@
-using System;
+using LibCSV;
 using LibCSV.Dialects;
 using NUnit.Framework;
-using LibCSV;
 
 namespace TestLibCSV
 {
 	class TestDialect : Dialect
 	{
-		public TestDialect() 
+		public TestDialect()
 			: base(true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false)
-		{ 
+		{
 		}
 	}
-	
+
 	[TestFixture]
 	public class DialectTests
 	{
-		public DialectTests ()
+		public DialectTests()
 		{
 		}
-		
+
 		[Test]
 		public void Dialect_CustomDialectEqual_Ok()
 		{
