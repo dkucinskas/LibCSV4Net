@@ -71,6 +71,50 @@ namespace LibCSV4NetApp
 ```
 
  * The following is simple example of using CSVWriter
+
+``` c#
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using LibCSV;
+using LibCSV.Dialects;
+
+namespace LibCSV4NetApp
+{
+	class MainClass
+	{
+		public static void Main (string[] args)
+		{
+            Dialect dialect = new Dialect(
+                true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false);
+
+            object[] data = new object[]
+            {
+			    new object[] { 123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0), null },
+                new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null
+                }
+            };
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                using (TextWriter textWriter = new StreamWriter(memoryStream))
+                using (CSVWriter writer = new CSVWriter(dialect, textWriter))
+                {
+                    foreach (object[] row in data)
+                        writer.WriteRow(row);
+                }
+
+                Encoding encoding = Encoding.ASCII;
+                Console.Write(encoding.GetString(memoryStream.ToArray()));
+            }
+
+			Console.ReadLine ();
+		}
+	}
+}
+
+```
  * The following is simple example of using CSVAdapter
 
 ## License
