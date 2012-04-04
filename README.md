@@ -27,44 +27,51 @@ Library for reading and writing tabular (CSV) files.
 
 ## Example
 
- * Define your Dialect
+ * The following is simple example of using CSVReader
 
 ``` c#
-public class MyDialect : Dialect
-{
-	public MyDialect()
-	{
-		DoubleQuote = true;
-		Delimiter = ';';
-		Quote = '"';
-		Escape = '\0';
-		SkipInitialSpace = false;
-		LineTerminator = "\r\n";
-		Quoting = QuoteStyle.QUOTE_NONNUMERIC;
-		Strict = false;
-		
-		if (CheckQuoting() == false)
-			throw new Exception("bad \"quoting\" value");
-	}
-}
-```
+using System;
+using System.Collections.Generic;
+using System.IO;
+using LibCSV;
+using LibCSV.Dialects;
 
- * Now you can use it like this
-
-``` c#
-using (CSVReader csvReader = new CSVReader(new MyDialect(), @"C:\CSV\MY_TEST.CSV", "windows-1257"))
+namespace LibCSV4NetApp
 {
-	while (csvReader.NextRecord())
+	class MainClass
 	{
-		string[] record = csvReader.GetCurrentRecord();
-		foreach(string item in record)
+		public static void Main (string[] args)
 		{
-			Console.Write(" " + item);
+			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2";
+			
+			Dialect dialect = new Dialect (
+				true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false);
+			
+			using (CSVReader reader = new CSVReader(dialect, new StringReader(input))) 
+            {
+				while (reader.NextRecord()) 
+                {	
+					string[] record = reader.GetCurrentRecord ();
+
+                    if (record != null && record.Length > 0)
+                    {
+                        foreach (string item in record)
+                            Console.Write(item + "| ");
+                        Console.WriteLine();
+                    }
+					
+					record = null;
+				}
+			}
+			
+			Console.ReadLine ();
 		}
-		Console.WriteLine();
 	}
 }
 ```
+
+ * The following is simple example of using CSVWriter
+ * The following is simple example of using CSVAdapter
 
 ## License
 
@@ -73,4 +80,9 @@ This is free software, and you are welcome to redistribute it under certain cond
 ## Author contact
 
 Darius Kucinskas d.kucinskas@gmail.com, http://blog-of-darius.blogspot.com/
+
+## Collaborators
+
+ssharunas ssharunas@yahoo.co.uk
+
 
