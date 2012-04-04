@@ -92,8 +92,7 @@ namespace LibCSV4NetApp
             object[] data = new object[]
             {
 			    new object[] { 123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0), null },
-                new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null
-                }
+                new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null }
             };
 
             using (MemoryStream memoryStream = new MemoryStream())
