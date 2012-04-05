@@ -2,29 +2,6 @@
 
 Library for reading and writing tabular (CSV) files.
 
-## Cahnges
-
-### 0.5
- * Improved CSVAdapter
- * Transformer supports transforming result for writing
-
-### 0.4
- * Added CSVWriter
-
-### 0.3
- * Changed IResultTransformer interface
-  * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
- 
-### 0.2 
-
- * Redesigne of CsvReader interface
-  * Dialect must be set in constructor (removed property)
-  * Added header support to Dialect
-  * Added GetCurrentRecord
-  * Recorrd is returned as string array
- * Added IResultTransformer
- * Added Adapter class
-
 ## Example
 
  * The following is simple example of using CSVReader
@@ -115,6 +92,29 @@ namespace LibCSV4NetApp
 
 ```
  * The following is simple example of using CSVAdapter
+
+## Cahnges
+
+### 0.5
+ * Improved CSVAdapter
+ * Transformer supports transforming result for writing
+
+### 0.4
+ * Added CSVWriter
+
+### 0.3
+ * Changed IResultTransformer interface
+  * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
+ 
+### 0.2 
+
+ * Redesigne of CsvReader interface
+  * Dialect must be set in constructor (removed property)
+  * Added header support to Dialect
+  * Added GetCurrentRecord
+  * Recorrd is returned as string array
+ * Added IResultTransformer
+ * Added Adapter class
 
 ## License
 
