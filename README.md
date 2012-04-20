@@ -93,7 +93,7 @@ namespace LibCSV4NetApp
 ```
  * The following is simple example of using CSVAdapter
 
-## Cahnges
+## Changes
 
 ### 0.5
  * Improved CSVAdapter
