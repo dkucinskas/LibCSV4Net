@@ -118,6 +118,7 @@ namespace LibCSV
 
 		public void WriteAll(IEnumerable data, IDataTransformer transformer)
 		{
+			int cellCount = -1;
 			bool isFirst = true;
 			CSVWriter writer = CreateWriter();
 
@@ -129,6 +130,7 @@ namespace LibCSV
 
 					if (stringRow != null)
 					{
+						cellCount = stringRow.Length;
 						writer.WriteRow(stringRow);
 						stringRow = null;
 					}
@@ -137,7 +139,25 @@ namespace LibCSV
 				}
 				else
 				{
-					writer.WriteRow(transformer.TransformRow(row));
+					object[] cells = transformer.TransformRow(row);
+
+					if (cells != null)
+					{
+						if (cellCount == -1)
+						{
+							cellCount = cells.Length;
+						}
+						else if (cells.Length != cellCount)
+						{
+							throw new Exception(string.Format(
+								"Cell count in all rows must be equal. Tried insert row with cell count {0}, but " +
+								"previously inserted row or header with cell count {1}.",
+								cells.Length, cellCount));
+						}
+					}
+
+					writer.WriteRow(cells);
+					cells = null;
 				}
 
 			}
