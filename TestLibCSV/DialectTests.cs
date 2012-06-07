@@ -7,7 +7,7 @@ namespace TestLibCSV
 	class TestDialect : Dialect
 	{
 		public TestDialect()
-			: base(true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false)
+			: base(true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false)
 		{
 		}
 	}
@@ -15,14 +15,10 @@ namespace TestLibCSV
 	[TestFixture]
 	public class DialectTests
 	{
-		public DialectTests()
-		{
-		}
-
 		[Test]
 		public void Dialect_CustomDialectEqual_Ok()
 		{
-			using (TestDialect dialect = new TestDialect())
+			using (var dialect = new TestDialect())
 			{
 				Assert.AreEqual(dialect.DoubleQuote, true);
 				Assert.AreEqual(dialect.Delimiter, ';');
@@ -30,7 +26,7 @@ namespace TestLibCSV
 				Assert.AreEqual(dialect.Escape, '\\');
 				Assert.AreEqual(dialect.SkipInitialSpace, true);
 				Assert.AreEqual(dialect.LineTerminator, "\r\n");
-				Assert.AreEqual(dialect.Quoting, QuoteStyle.QUOTE_NONE);
+				Assert.AreEqual(dialect.Quoting, QuoteStyle.QuoteNone);
 				Assert.AreEqual(dialect.Strict, true);
 				Assert.AreEqual(dialect.HasHeader, false);
 			}

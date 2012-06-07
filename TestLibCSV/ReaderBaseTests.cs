@@ -13,17 +13,16 @@ namespace TestLibCSV
 		{
 			if (list != null && list.Count > 0)
 			{
-				int count = list.Count;
-				for (int i = 0; i < count; i++)
+				var count = list.Count;
+				for (var i = 0; i < count; i++)
 				{
 					if (list[i] != null && list[i].Count > 0)
 					{
-						int countInner = list[i].Count;
-						for (int j = 0; j < count; j++)
+					    for (var j = 0; j < count; j++)
 						{
 							if (list[i][j] != null)
 							{
-								IDisposable disposable = list[i][j] as IDisposable;
+								var disposable = list[i][j] as IDisposable;
 								if (disposable != null)
 								{
 									disposable.Dispose();
@@ -41,11 +40,11 @@ namespace TestLibCSV
 		public static void ReadTest(string input, IList<IList<object>> expect, Dialect dialect)
 		{
 			IList<IList<object>> results = new List<IList<object>>();
-			using (CSVReader reader = new CSVReader(dialect, new StringReader(input)))
+			using (var reader = new CSVReader(dialect, new StringReader(input)))
 			{
 				while (reader.NextRecord())
 				{
-					string[] record = reader.GetCurrentRecord();
+					var record = reader.GetCurrentRecord();
 					if (record != null && record.Length > 0)
 						results.Add(record);
 					record = null;
@@ -62,4 +61,3 @@ namespace TestLibCSV
 		}
 	}
 }
-

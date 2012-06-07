@@ -11,9 +11,9 @@ namespace TestLibCSV
 	{
 		internal class NullTransformerForAdapterTesting : IDataTransformer
 		{
-			private string[] _aliases = null;
-			private IList _records = null;
-			private int row = 0;
+			private string[] _aliases;
+			private IList _records;
+			private int _row;
 
 			public NullTransformerForAdapterTesting(string[] expectedAliases, IList expectedResults)
 			{
@@ -27,9 +27,9 @@ namespace TestLibCSV
 					Assert.AreEqual(_aliases, aliases);
 
 				if (_records != null)
-					Assert.AreEqual(_records[row], tuple);
+					Assert.AreEqual(_records[_row], tuple);
 
-				row++;
+				_row++;
 				return null;
 			}
 
@@ -40,44 +40,37 @@ namespace TestLibCSV
 
 			public object[] TransformRow(object tuple)
 			{
-				if (_aliases != null && row == 0)
-					row++;
-
 				if (_records != null)
 				{
-					Assert.AreEqual(_records[row], (object[])tuple);
-					row++;
+					Assert.AreEqual(_records[_row], tuple);
+					_row++;
 				}
 
 				return null;
 			}
 		}
 
-		public AdapterTests()
-		{
-		}
-
 		[Test]
 		public void ReadAll_InputWithHeader_Ok()
 		{
-			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6";
+			const string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6";
 
 			IDataTransformer transformer = new NullTransformerForAdapterTesting(
-			new string[] 
+			new[] 
 			{ 
 				"Header#1", 
 				"Header#2", 
 				"Header#3" 
 			},
-			new ArrayList() 
+			new[] 
 			{
-				new string[] {"1", "2", "3"},
-				new string[] {"4", "5", "6"},
+				new[] {"1", "2", "3"},
+				new[] {"4", "5", "6"}
 			});
 
-			using (Dialect dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, true))
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, true))
 			{
-				using (CSVAdapter adapter = new CSVAdapter(dialect, new StringReader(input)))
+				using (var adapter = new CSVAdapter(dialect, new StringReader(input)))
 				{
 					adapter.ReadAll(transformer);
 				}
@@ -87,19 +80,19 @@ namespace TestLibCSV
 		[Test]
 		public void ReadAll_InputWithoutHeader_Ok()
 		{
-			string input = "1;2;3\r\n4;5;6";
+            const string input = "1;2;3\r\n4;5;6";
 
 			IDataTransformer transformer = new NullTransformerForAdapterTesting(
 			null,
-			new ArrayList() 
+			new[] 
 			{
-				new string[] {"1", "2", "3"},
-				new string[] {"4", "5", "6"},
+				new[] {"1", "2", "3"},
+				new[] {"4", "5", "6"}
 			});
 
-			using (Dialect dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false))
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false))
 			{
-				using (CSVAdapter adapter = new CSVAdapter(dialect, new StringReader(input)))
+				using (var adapter = new CSVAdapter(dialect, new StringReader(input)))
 				{
 					adapter.ReadAll(transformer);
 				}
@@ -109,19 +102,19 @@ namespace TestLibCSV
 		[Test]
 		public void WriteAll_OutputWithoutHeader_Ok()
 		{
-			ArrayList data = new ArrayList() 
+            var data = new[] 
 				{
-					new string[] {"1", "2", "3"},
-					new string[] {"4", "5", "6"},
+					new[] {"1", "2", "3"},
+					new[] {"4", "5", "6"}
 				};
 
 			IDataTransformer transformer = new NullTransformerForAdapterTesting(
 				null,
 				data);
 
-			using (Dialect dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false))
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false))
 			{
-				using (CSVAdapter adapter = new CSVAdapter(dialect, new StringWriter()))
+				using (var adapter = new CSVAdapter(dialect, new StringWriter()))
 				{
 					adapter.WriteAll(data, transformer);
 				}
@@ -131,27 +124,26 @@ namespace TestLibCSV
 		[Test]
 		public void WriteAll_OutputWithHeader_Ok()
 		{
-			string[] header = new string[] 
+			var headers = new[] 
 			{ 
 				"Header#1", 
 				"Header#2", 
 				"Header#3" 
 			};
 
-			ArrayList data = new ArrayList() 
+			var data = new[] 
 			{
-				header,
-				new string[] {"1", "2", "3"},
-				new string[] {"4", "5", "6"},
+				new[] {"1", "2", "3"},
+				new[] {"4", "5", "6"}
 			};
 
 			IDataTransformer transformer = new NullTransformerForAdapterTesting(
-			header,
+			headers,
 			data);
 
-			using (Dialect dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, true))
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, true))
 			{
-				using (CSVAdapter adapter = new CSVAdapter(dialect, new StringWriter()))
+                using (var adapter = new CSVAdapter(dialect, new StringWriter(), headers))
 				{
 					adapter.WriteAll(data, transformer);
 				}

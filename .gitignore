@@ -1,6 +1,27 @@
-bin
-obj
-*.userprefs
-*.suo
-*.pidb
+# Build and Object Folders
+bin/
+obj/
+Obj/
+
+#User Specific Files
 *.user
+*.suo
+*.userprefs
+*.pidb
+
+
+#Resource Caches
+_ReSharper.*
+*.sln.cache
+
+#Nuget
+packages
+
+#vim
+*~
+*.swp
+
+#unit tests
+TestResults
+test-results
+

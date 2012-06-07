@@ -3,33 +3,41 @@ using System.Collections.Generic;
 
 namespace LibCSV.Dialects
 {
-	/// CSV dialect
-	/// 
-	/// The Dialect type records CSV parsing and generation options.
+	/// CSV Dialect holds CSV parsing and generation options.
 	public class Dialect : IDisposable
 	{
 		public static IList<StyleDesc> QuoteStyles = new List<StyleDesc>()
 		{
-			new StyleDesc(QuoteStyle.QUOTE_MINIMAL, "QUOTE_MINIMAL"),
-			new StyleDesc(QuoteStyle.QUOTE_ALL, "QUOTE_ALL"),
-			new StyleDesc(QuoteStyle.QUOTE_NONNUMERIC, "QUOTE_NONNUMERIC"),
-			new StyleDesc(QuoteStyle.QUOTE_NONE, "QUOTE_NONE")
+			new StyleDesc(QuoteStyle.QuoteMinimal, "QUOTE_MINIMAL"),
+			new StyleDesc(QuoteStyle.QuoteAll, "QUOTE_ALL"),
+			new StyleDesc(QuoteStyle.QuoteNonnumeric, "QUOTE_NONNUMERIC"),
+			new StyleDesc(QuoteStyle.QuoteNone, "QUOTE_NONE")
 		};
 
 		private bool _doubleQuote;  /* is " represented by ""? */
+
 		private char _delimiter = '\0'; /* field separator */
+
 		private char _quote; /* quote character */
+
 		private char _escape = '\0';  /* escape character */
+
 		private bool _skipInitialSpace = false; /* ignore spaces following delimiter? */
+
 		private string _lineTerminator = null; /* string to write between records */
-		private QuoteStyle _quoting = QuoteStyle.QUOTE_NONE; /* style of quoting to write */
+
+		private QuoteStyle _quoting = QuoteStyle.QuoteNone; /* style of quoting to write */
+
 		private bool _strict;                 /* raise exception on bad CSV */
+
 		private string _error = null;
+
 		private bool _hasHeader = false;
+
 		private bool _disposed = false;
 
 		public Dialect()
-			: this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false)
+			: this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, false)
 		{
 		}
 
@@ -53,7 +61,7 @@ namespace LibCSV.Dialects
 			if (CheckQuoting() == false)
 				_error = "Bad \"quoting\" value";
 
-			if (_quoting != QuoteStyle.QUOTE_NONE && _quote == '\0')
+			if (_quoting != QuoteStyle.QuoteNone && _quote == '\0')
 				_error = "Quotechar must be set if quoting enabled";
 
 			if (_lineTerminator == null)
@@ -128,10 +136,10 @@ namespace LibCSV.Dialects
 
 		public bool CheckQuoting()
 		{
-			int count = QuoteStyles.Count;
-			for (int i = 0; i < count; i++)
+			var count = QuoteStyles.Count;
+			for (var i = 0; i < count; i++)
 			{
-				if (QuoteStyles[i].style == _quoting)
+				if (QuoteStyles[i].Style == _quoting)
 					return true;
 			}
 

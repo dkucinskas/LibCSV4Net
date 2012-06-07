@@ -7,11 +7,16 @@ using LibCSV.Exceptions;
 
 namespace LibCSV
 {
+    /// <summary>
+    /// CSV Writer. Writes tabula data to stream.
+    /// </summary>
 	public class CSVWriter : IDisposable
 	{
-		private TextWriter _writer = null;
-		private Dialect _dialect = null;
-		private bool _disposed = false;
+		private TextWriter _writer;
+
+	    private Dialect _dialect;
+
+		private bool _disposed;
 
 		public CSVWriter()
 		{
@@ -43,7 +48,7 @@ namespace LibCSV
 
 		public Dialect Dialect
 		{
-			get { return this._dialect; }
+			get { return _dialect; }
 			set { _dialect = value; }
 		}
 
@@ -61,8 +66,8 @@ namespace LibCSV
 			if (row == null || row.Count < 1)
 				return;
 
-			int count = row.Count;
-			for (int i = 0; i < count; i++)
+			var count = row.Count;
+			for (var i = 0; i < count; i++)
 			{
 				WriteField(row[i]);
 
@@ -71,7 +76,6 @@ namespace LibCSV
 			}
 
 			_writer.WriteLine();
-
 			row = null;
 		}
 
@@ -98,13 +102,13 @@ namespace LibCSV
 
 		protected virtual void WriteString(string field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QUOTE_NONE)
+			if (Dialect.Quoting == QuoteStyle.QuoteNone)
 				_writer.Write(field);
 			else
 			{
 				_writer.Write(Dialect.Quote);
 
-				if (Dialect.DoubleQuote == true)
+				if (Dialect.DoubleQuote)
 					WriteEscapedString(field);
 				else
 					WriteString(field);
@@ -115,30 +119,30 @@ namespace LibCSV
 
 		protected virtual void WriteNumber(object field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QUOTE_ALL)
+			if (Dialect.Quoting == QuoteStyle.QuoteAll)
 				_writer.Write(Dialect.Quote);
 
 			_writer.Write(field);
 
-			if (Dialect.Quoting == QuoteStyle.QUOTE_ALL)
+			if (Dialect.Quoting == QuoteStyle.QuoteAll)
 				_writer.Write(Dialect.Quote);
 		}
 
 		protected virtual void WriteObject(object field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QUOTE_ALL)
+			if (Dialect.Quoting == QuoteStyle.QuoteAll)
 				_writer.Write(Dialect.Quote);
 
 			_writer.Write(field.ToString());
 
-			if (Dialect.Quoting == QuoteStyle.QUOTE_ALL)
+			if (Dialect.Quoting == QuoteStyle.QuoteAll)
 				_writer.Write(Dialect.Quote);
 		}
 
 		protected virtual void WriteEscapedString(string field)
 		{
-			int count = field.Length;
-			for (int i = 0; i < count; i++)
+			var count = field.Length;
+			for (var i = 0; i < count; i++)
 			{
 				if (field[i] == Dialect.Quote)
 					_writer.Write(Dialect.Escape);

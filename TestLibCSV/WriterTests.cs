@@ -11,27 +11,23 @@ namespace TestLibCSV
 	[TestFixture]
 	public class WriterTests
 	{
-		public WriterTests()
-		{
-		}
-
 		[Test]
 		public void Writer_WriteRow_Ok()
 		{
-			CultureInfo oldCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+			var oldCulture = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			object[] row = new object[]
+			var row = new object[]
 			{
 				123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0),
 				null, 1
 			};
 
-			string results = null;
-			using (StringWriter stringWriter = new StringWriter())
+			string results;
+			using (var stringWriter = new StringWriter())
 			{
-				using (CSVWriter writer = new CSVWriter(
-					new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false),
+				using (var writer = new CSVWriter(
+					new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false),
 					stringWriter))
 				{
 					writer.WriteRow(row);

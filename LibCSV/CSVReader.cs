@@ -7,25 +7,29 @@ using LibCSV.Exceptions;
 
 namespace LibCSV
 {
-	/// CSV reader
-	/// Reader objects are responsible for reading and parsing tabular data
+	/// CSV reader. Responsible for reading and parsing tabular data
 	/// in CSV format. Supports only basic read operation: read next record.
 	public class CSVReader : IDisposable
 	{
 		internal const int MAX_CAPACITY = 8000;// 8000 * 2 ~4GB max memory for process in 32bit OS
+
 		internal const int DEFAULT_CAPACITY = 16;
 
-		private TextReader _reader = null;
-		private Dialect _dialect = null;
-		private IList<string> _fields = null;
+		private TextReader _reader;
+
+		private Dialect _dialect;
+
+		private IList<string> _fields;
 
 		private ParserState _state;
 
-		private char[] _buffer = null;
-		private int _capacity = 0;
-		private int _fieldLength = 0;
+		private char[] _buffer;
+		
+        private int _capacity;
 
-		private bool _disposed = false;
+		private int _fieldLength;
+
+		private bool _disposed;
 
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
@@ -34,13 +38,12 @@ namespace LibCSV
 
 			GrowBuffer();
 
-			if (_reader == null)
-			{
-				if (!File.Exists(filename))
-					throw new ReaderException(string.Format("Can't read from file: '{0}', file not exists!", filename));
+		    if (_reader != null) return;
 
-				_reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
-			}
+		    if (!File.Exists(filename))
+		        throw new ReaderException(string.Format("Can't read from file: '{0}', file not exists!", filename));
+
+		    _reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
 		}
 
 		public CSVReader(Dialect dialect, TextReader reader)
@@ -56,7 +59,7 @@ namespace LibCSV
 
 		public Dialect Dialect
 		{
-			get { return this._dialect; }
+			get { return _dialect; }
 			set { _dialect = value; }
 		}
 
@@ -132,18 +135,18 @@ namespace LibCSV
 						{
 							break;
 						}
-						else if (IsEndOfLine(currentCharacter))
-						{
-							_state = ParserState.EndOfRecord;
-							break;
-						}
+					
+                        if (IsEndOfLine(currentCharacter))
+					    {
+					        _state = ParserState.EndOfRecord;
+					        break;
+					    }
 
-						_state = ParserState.StartOfField;
+					    _state = ParserState.StartOfField;
 						goto case ParserState.StartOfField;
+					}
 
-					};
-
-				case ParserState.StartOfField:
+			    case ParserState.StartOfField:
 					ProcessStartOfField(currentCharacter);
 					break;
 
@@ -171,7 +174,7 @@ namespace LibCSV
 
 		protected void ProcessQuoteInQuotedField(char currentCharacter)
 		{
-			if (_dialect.Quoting != QuoteStyle.QUOTE_NONE && currentCharacter == _dialect.Quote)
+			if (_dialect.Quoting != QuoteStyle.QuoteNone && currentCharacter == _dialect.Quote)
 			{
 				AddChar(currentCharacter);
 				_state = ParserState.InQuotedField;
@@ -216,16 +219,9 @@ namespace LibCSV
 			{
 				_state = ParserState.EscapeInQuotedField;
 			}
-			else if (currentCharacter == _dialect.Quote && _dialect.Quoting != QuoteStyle.QUOTE_NONE)
+			else if (currentCharacter == _dialect.Quote && _dialect.Quoting != QuoteStyle.QuoteNone)
 			{
-				if (_dialect.DoubleQuote == true)
-				{
-					_state = ParserState.QuoteInQuotedField;
-				}
-				else
-				{
-					_state = ParserState.InField;
-				}
+				_state = _dialect.DoubleQuote ? ParserState.QuoteInQuotedField : ParserState.InField;
 			}
 			else
 			{
@@ -271,7 +267,7 @@ namespace LibCSV
 				SaveField();
 				_state = (IsNull(currentCharacter) ? ParserState.StartOfRecord : ParserState.EndOfRecord);
 			}
-			else if (currentCharacter == _dialect.Quote && _dialect.Quoting != QuoteStyle.QUOTE_NONE)
+			else if (currentCharacter == _dialect.Quote && _dialect.Quoting != QuoteStyle.QuoteNone)
 			{
 				_state = ParserState.InQuotedField;
 			}
@@ -311,24 +307,19 @@ namespace LibCSV
 			if (!string.IsNullOrEmpty(_dialect.Error))
 				throw new DialectInternalErrorException("Dialect error: " + _dialect.Error);
 
-			string line = null;
-			char c = '\0';
-			long length = 0;
+		    Reset();
 
-			Reset();
-
-			line = _reader.ReadLine();
+			var line = _reader.ReadLine();
 			if (string.IsNullOrEmpty(line))
 				return false;
 
-			length = line.Length;
+			var length = line.Length;
 			if (length < 0)
 				return false;
 
-			for (int i = 0; i < length; i++)
+			for (var i = 0; i < length; i++)
 			{
-				c = line[i];
-
+				var c = line[i];
 				if (IsNull(c))
 					throw new BadFormatException("Line contains NULL byte!");
 

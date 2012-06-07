@@ -4,6 +4,73 @@ Library for reading and writing tabular (CSV) files.
 
 ## Example
 
+ * The following is simple example of using CSVAdapter
+
+``` c#
+
+// Define dialect
+public class ExcelDialect : Dialect
+{
+    public ExcelDialect()
+        : base(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, true)
+    {
+    }
+}
+
+// Define tranformer from your custom type to tabuler data.
+public class ExportTransformer : IDataTransformer
+{
+    public object TransformTuple(object[] tuple, string[] aliases)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public IEnumerable TransformResult(IEnumerable result)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public object[] TransformRow(object tuple)
+    {
+        var data = tuple as CustomDto;
+
+        if (data == null)
+        {
+            throw new Exception();
+        }
+
+        var row = new string[4];
+        row[0] = data.Tile;
+        row[1] = data.CreatedOn.ToString(CultureInfo.InvariantCulture);
+        row[2] = data.Total.ToString(CultureInfo.InvariantCulture);
+        row[3] = data.Description;
+
+        return row;
+    }
+}
+
+// Now we will write all data to csv file.
+var data = new CustomDto[]
+{
+	new CustomDto { Title = "Title1", CreatedOn = DateTime.Now, Total = 1000.00, Description = "Description1" },
+	new CustomDto { Title = "Title2", CreatedOn = DateTime.Now, Total = 2000.00, Description = "Description2" },
+}
+
+using (var writer = new StreamWriter(@"C:\test.csv"))
+{
+    using (var adapter = new CSVAdapter(new ExcelDialect(), writer, new string[]
+                                                                        {
+                                                                            "Tile", 
+																			"CreatedOn",
+                                                                            "Total",
+                                                                            "Description"
+                                                                        }))
+    {
+        adapter.WriteAll(data, new ExportTransformer());
+    }
+}
+```
+
  * The following is simple example of using CSVReader
 
 ``` c#
@@ -94,6 +161,11 @@ namespace LibCSV4NetApp
  * The following is simple example of using CSVAdapter
 
 ## Changes
+
+### 0.6.7.0838
+ * Code cleanup
+ * Headers must be specified explicity in CSVDialect
+ * Updated examples in README.md
 
 ### 0.5
  * Improved CSVAdapter

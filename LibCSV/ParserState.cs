@@ -1,4 +1,3 @@
-
 namespace LibCSV
 {
 	public enum ParserState

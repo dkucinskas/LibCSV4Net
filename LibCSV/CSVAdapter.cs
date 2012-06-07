@@ -8,18 +8,24 @@ using LibCSV.Dialects;
 
 namespace LibCSV
 {
-	/// CSV adapter.
-	/// Advanced csv reader that supports read all of records and transformations.
+	/// Advanced csv reader/writer that supports read/write of all records and transformations.
 	public class CSVAdapter : IDisposable
 	{
-		private bool _disposed = false;
-		private string _filename = null;
-		private string _encoding = null;
-		private TextReader _reader = null;
-		private TextWriter _writer = null;
-		private Dialect _dialect = null;
+		private bool _disposed;
+
+		private string _filename;
+
+		private string _encoding;
+
+		private TextReader _reader;
+
+		private TextWriter _writer;
+
+		private Dialect _dialect;
 
 		private IDictionary<string, Type> _types = new Dictionary<string, Type>();
+
+	    private string[] _headers;
 
 		public CSVAdapter(Dialect dialect, string filename, string encoding)
 		{
@@ -40,6 +46,18 @@ namespace LibCSV
 			_writer = writer;
 		}
 
+        public CSVAdapter(Dialect dialect, TextWriter writer, string[] headers)
+        {
+            _dialect = dialect;
+            _writer = writer;
+
+            //TODO: fix this //:~
+            if (headers == null)
+                throw new Exception();
+
+            _headers = headers;
+        }
+
 		public bool IsDisposed
 		{
 			get { return _disposed; }
@@ -53,33 +71,30 @@ namespace LibCSV
 
 		private CSVReader CreateReader()
 		{
-			if (_reader != null)
-				return new CSVReader(_dialect, _reader);
-			else
-				return new CSVReader(_dialect, _filename, _encoding);
-
+		    return _reader == null ? 
+                new CSVReader(_dialect, _filename, _encoding) : 
+                new CSVReader(_dialect, _reader);
 		}
 
-		private CSVWriter CreateWriter()
-		{
-			if (_writer != null)
-				return new CSVWriter(_dialect, _writer);
-			else
-				return new CSVWriter(_dialect, _filename, _encoding);
-		}
+	    private CSVWriter CreateWriter()
+	    {
+	        return _writer != null ? 
+                new CSVWriter(_dialect, _writer) : 
+                new CSVWriter(_dialect, _filename, _encoding);
+	    }
 
-		public IEnumerable ReadAll(IDataTransformer transformer)
+	    public IEnumerable ReadAll(IDataTransformer transformer)
 		{
 			IList results = new ArrayList();
 
-			CSVReader reader = CreateReader();
+			var reader = CreateReader();
 
-			int row = 0;
+			var row = 0;
 			string[] aliases = null;
 
 			while (reader.NextRecord())
 			{
-				string[] values = reader.GetCurrentRecord();
+				var values = reader.GetCurrentRecord();
 
 				if (row == 0 && _dialect.HasHeader)
 				{
@@ -87,9 +102,9 @@ namespace LibCSV
 				}
 				else if (_types.Count > 0)
 				{
-					object[] record = new object[values.Length];
-					int count = values.Length;
-					for (int i = 0; i < count; i++)
+					var record = new object[values.Length];
+					var count = values.Length;
+					for (var i = 0; i < count; i++)
 					{
 						if (_types.ContainsKey(aliases[i]))
 						{
@@ -118,49 +133,39 @@ namespace LibCSV
 
 		public void WriteAll(IEnumerable data, IDataTransformer transformer)
 		{
-			int cellCount = -1;
-			bool isFirst = true;
-			CSVWriter writer = CreateWriter();
+            //TODO: fix this //:~
+            if (transformer == null)
+                throw new Exception();
 
-			foreach (object row in data)
-			{
-				if (isFirst && _dialect.HasHeader)
-				{
-					string[] stringRow = row as string[];
+			var cellCount = -1;
+			var writer = CreateWriter();
 
-					if (stringRow != null)
-					{
-						cellCount = stringRow.Length;
-						writer.WriteRow(stringRow);
-						stringRow = null;
-					}
+            if (_dialect.HasHeader && _headers != null && _headers.Length > 0)
+            {
+                writer.WriteRow(_headers);
+            }
 
-					isFirst = false;
-				}
-				else
-				{
-					object[] cells = transformer.TransformRow(row);
+            foreach (var row in data)
+            {
+                var cells = transformer.TransformRow(row);
+                if (cells != null)
+                {
+                    if (cellCount == -1)
+                    {
+                        cellCount = cells.Length;
+                    }
+                    else if (cells.Length != cellCount)
+                    {
+                        throw new Exception(string.Format(
+                            "Cell count in all rows must be equal. Tried insert row with cell count {0}, but " +
+                            "previously inserted row or header with cell count {1}.",
+                            cells.Length, cellCount));
+                    }
+                }
 
-					if (cells != null)
-					{
-						if (cellCount == -1)
-						{
-							cellCount = cells.Length;
-						}
-						else if (cells.Length != cellCount)
-						{
-							throw new Exception(string.Format(
-								"Cell count in all rows must be equal. Tried insert row with cell count {0}, but " +
-								"previously inserted row or header with cell count {1}.",
-								cells.Length, cellCount));
-						}
-					}
-
-					writer.WriteRow(cells);
-					cells = null;
-				}
-
-			}
+                writer.WriteRow(cells);
+                cells = null;
+            }
 
 			writer.Dispose();
 			writer = null;
@@ -173,9 +178,9 @@ namespace LibCSV
 				return type.IsValueType ? Activator.CreateInstance(type) : null;
 			}
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
 			{
-				NullableConverter nc = new NullableConverter(type);
+				var nc = new NullableConverter(type);
 				type = nc.UnderlyingType;
 			}
 
@@ -196,14 +201,14 @@ namespace LibCSV
 			}
 
 			//Maybe we have a constructor that accept the type?
-			ConstructorInfo ctor = type.GetConstructor(new Type[] { inject.GetType() });
+			var ctor = type.GetConstructor(new Type[] { inject.GetType() });
 			if (ctor != null)
 			{
 				return Activator.CreateInstance(type, inject);
 			}
 
 			//Maybe we have a Parse method ??
-			MethodInfo parseMethod = type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public);
+			var parseMethod = type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public);
 			if (parseMethod != null)
 			{
 				return parseMethod.Invoke(null, new object[] { inject });
