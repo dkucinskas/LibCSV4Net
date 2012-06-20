@@ -25,3 +25,5 @@ packages
 TestResults
 test-results
 
+# StyleCope
+StyleCop.Cache
