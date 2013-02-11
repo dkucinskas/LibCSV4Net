@@ -36,7 +36,7 @@ namespace LibCSV.Dialects
 
 		private bool _disposed = false;
 
-		public Dialect()
+		public Dialect ()
 			: this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, false)
 		{
 		}
