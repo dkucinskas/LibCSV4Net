@@ -162,6 +162,9 @@ namespace LibCSV4NetApp
 
 ## Changes
 
+### 0.6.8.1105
+ * Added NuGet package
+
 ### 0.6.7.0838
  * Code cleanup
  * Headers must be specified explicity in CSVDialect

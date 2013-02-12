@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>LibCSV4Net</id>
+    <version>$version$</version>
+    <authors>Darius Kucinskas</authors>
+    <owners>Darius Kucinskas</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/dkucinskas/LibCSV4Net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Library for reading and writing tabular (CSV) files.</description>
+    <releaseNotes>Added nuget package.</releaseNotes>
+    <copyright>Copyright 2011-2013</copyright>
+    <tags>csv</tags>
+  </metadata>
+  <files>
+  	<file src="..\LICENSE.txt" target="doc" /> 
+  	<file src="..\README.md" target="doc" />
+  </files>
+</package>

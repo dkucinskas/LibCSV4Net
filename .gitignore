@@ -16,6 +16,7 @@ _ReSharper.*
 
 #Nuget
 packages
+*.nupkg
 
 #vim
 *~
