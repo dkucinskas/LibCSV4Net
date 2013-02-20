@@ -12,7 +12,7 @@ Library for reading and writing tabular (CSV) files.
 public class ExcelDialect : Dialect
 {
     public ExcelDialect()
-        : base(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, true)
+        : base(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, true)
     {
     }
 }
@@ -131,7 +131,7 @@ namespace LibCSV4NetApp
 		public static void Main (string[] args)
 		{
             Dialect dialect = new Dialect(
-                true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QUOTE_MINIMAL, false, false);
+                true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false);
 
             object[] data = new object[]
             {
