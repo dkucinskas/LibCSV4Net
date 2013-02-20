@@ -89,7 +89,7 @@ namespace LibCSV4NetApp
 			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2";
 			
 			Dialect dialect = new Dialect (
-				true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QUOTE_NONE, true, false);
+				true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false);
 			
 			using (CSVReader reader = new CSVReader(dialect, new StringReader(input))) 
             {
