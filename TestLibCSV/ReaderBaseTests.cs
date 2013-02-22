@@ -42,9 +42,9 @@ namespace TestLibCSV
 			IList<IList<object>> results = new List<IList<object>>();
 			using (var reader = new CSVReader(dialect, new StringReader(input)))
 			{
-				while (reader.NextRecord())
+				while (reader.Next())
 				{
-					var record = reader.GetCurrentRecord();
+					var record = reader.Current;
 					if (record != null && record.Length > 0)
 						results.Add(record);
 					record = null;

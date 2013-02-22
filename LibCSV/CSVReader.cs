@@ -296,7 +296,7 @@ namespace LibCSV
 			_state = ParserState.StartOfRecord;
 		}
 
-		public bool NextRecord()
+		public bool Next()
 		{
 			if (_reader == null)
 				throw new TextReaderIsNullException();
@@ -330,17 +330,22 @@ namespace LibCSV
 			return true;
 		}
 
-		public string[] GetCurrentRecord()
-		{
-			if (_fields == null)
-				return null;
+	    public string[] Current
+	    {
+	        get
+	        {
+	            if (_fields == null)
+	            {
+	                return null;
+	            }
 
-			string[] results = new string[_fields.Count];
-			_fields.CopyTo(results, 0);
-			return results;
-		}
+	            string[] results = new string[_fields.Count];
+	            _fields.CopyTo(results, 0);
+	            return results;
+	        }
+	    }
 
-		protected virtual void Dispose(bool disposing)
+	    protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
 			{

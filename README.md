@@ -93,9 +93,9 @@ namespace LibCSV4NetApp
 			
 			using (CSVReader reader = new CSVReader(dialect, new StringReader(input))) 
             {
-				while (reader.NextRecord()) 
+				while (reader.Next()) 
                 {	
-					string[] record = reader.GetCurrentRecord ();
+					string[] record = reader.Current;
 
                     if (record != null && record.Length > 0)
                     {
@@ -161,6 +161,11 @@ namespace LibCSV4NetApp
  * The following is simple example of using CSVAdapter
 
 ## Changes
+
+### 0.7.2.1401
+ * CSVReader method NextRecord renamed to Next.
+ * CSVReader method GetCurrentRecord refactored to property Current.
+ * Updated documentation to reflect this change.
 
 ### 0.6.8.1105
  * Added NuGet package

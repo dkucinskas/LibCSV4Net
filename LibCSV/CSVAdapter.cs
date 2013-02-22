@@ -92,9 +92,9 @@ namespace LibCSV
 			var row = 0;
 			string[] aliases = null;
 
-			while (reader.NextRecord())
+			while (reader.Next())
 			{
-				var values = reader.GetCurrentRecord();
+				var values = reader.Current;
 
 				if (row == 0 && _dialect.HasHeader)
 				{

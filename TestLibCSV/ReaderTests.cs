@@ -20,9 +20,9 @@ namespace TestLibCSV
 			{
 				using (var reader = new CSVReader(dialect, null))
 				{
-					while (reader.NextRecord())
+					while (reader.Next())
 					{
-						var record = reader.GetCurrentRecord();
+						var record = reader.Current;
 						if (record != null && record.Length > 0)
 							results.Add(record);
 					}
@@ -38,9 +38,9 @@ namespace TestLibCSV
 
 			using (var reader = new CSVReader(null, new StringReader("1,2,3")))
 			{
-				while (reader.NextRecord())
+				while (reader.Next())
 				{
-					var record = reader.GetCurrentRecord();
+					var record = reader.Current;
 					if (record != null && record.Length > 0)
 						results.Add(record);
 				}
@@ -57,9 +57,9 @@ namespace TestLibCSV
 			{
 				using (var reader = new CSVReader(dialect, new StringReader("1,2,3")))
 				{
-					while (reader.NextRecord())
+					while (reader.Next())
 					{
-						var record = reader.GetCurrentRecord();
+						var record = reader.Current;
 						if (record != null && record.Length > 0)
 							results.Add(record);
 					}
@@ -77,9 +77,9 @@ namespace TestLibCSV
 			{
 				using (var reader = new CSVReader(dialect, "__no_file.txt", "utf-8"))
 				{
-					while (reader.NextRecord())
+					while (reader.Next())
 					{
-						var record = reader.GetCurrentRecord();
+						var record = reader.Current;
 						if (record != null && record.Length > 0)
 							results.Add(record);
 					}
