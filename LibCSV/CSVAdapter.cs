@@ -98,7 +98,9 @@ namespace LibCSV
 
 				if (row == 0 && _dialect.HasHeader)
 				{
-					aliases = values;
+				    aliases = reader.Headers;
+                    if (aliases == null)
+                        throw new Exception();
 				}
 				else if (_types.Count > 0)
 				{

@@ -2,6 +2,17 @@
 
 Library for reading and writing tabular (CSV) files.
 
+## History
+
+This library started its life as port of Python CSV module. At the time I was searching for .Net library which could handle third party legacy CSV format. I didn't succeeded, so I created this library. It was tested with some huge data imports/exports.  
+
+## API
+
+ * CSVReader is responsible for reading and parsing tabular data. Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
+  * Next() - reads and parses next record (returns true on success)
+  * Current - return current record as array of strings
+  * Headers - return headers as array of strings
+
 ## Example
 
  * The following is simple example of using CSVAdapter
@@ -17,7 +28,7 @@ public class ExcelDialect : Dialect
     }
 }
 
-// Define tranformer from your custom type to tabuler data.
+// Define transformer from your custom type to tabular data.
 public class ExportTransformer : IDataTransformer
 {
     public object TransformTuple(object[] tuple, string[] aliases)
@@ -172,7 +183,7 @@ namespace LibCSV4NetApp
 
 ### 0.6.7.0838
  * Code cleanup
- * Headers must be specified explicity in CSVDialect
+ * Headers must be specified explicitly in CSVDialect
  * Updated examples in README.md
 
 ### 0.5
@@ -188,11 +199,11 @@ namespace LibCSV4NetApp
  
 ### 0.2 
 
- * Redesigne of CsvReader interface
+ * Redesigned CSVReader interface
   * Dialect must be set in constructor (removed property)
   * Added header support to Dialect
   * Added GetCurrentRecord
-  * Recorrd is returned as string array
+  * Record is returned as string array
  * Added IResultTransformer
  * Added Adapter class
 

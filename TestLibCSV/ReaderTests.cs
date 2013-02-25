@@ -250,6 +250,20 @@ namespace TestLibCSV
 				}, dialect);
 			}
 		}
+
+        [Test]
+        public void Reader_DontReturnHeaderAsFirstRecord_Ok()
+        {
+            using (var dialect = new Dialect(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, true))
+            {
+                ReadTest("Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2", new List<IList<object>> 
+                { 
+                    new List<object> { "1", "2", "3" },
+                    new List<object> { "4", "5", "6" }, 
+                    new List<object> { "test1", "234", "test2" }, 
+				}, dialect);
+            }
+        }
 	}
 }
 

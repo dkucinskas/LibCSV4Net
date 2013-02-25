@@ -7,8 +7,14 @@ using LibCSV.Exceptions;
 
 namespace LibCSV
 {
-	/// CSV reader. Responsible for reading and parsing tabular data
-	/// in CSV format. Supports only basic read operation: read next record.
+    /// <summary>
+    /// CSV reader is responsible for reading and parsing tabular data. 
+    /// Parsing is controlled by set of rules defined in Dialect.
+    /// API exposes the following operations: 
+    ///  - Next() : reads and parses next record (returns true on success)
+    ///  - Current : return current record as array of strings
+    ///  - Headers : return headers as array of strings
+    /// </summary>
 	public class CSVReader : IDisposable
 	{
 		internal const int MAX_CAPACITY = 8000;// 8000 * 2 ~4GB max memory for process in 32bit OS
@@ -30,6 +36,10 @@ namespace LibCSV
 		private int _fieldLength;
 
 		private bool _disposed;
+
+	    private long _index;
+
+	    private string[] _headers;
 
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
@@ -325,10 +335,19 @@ namespace LibCSV
 
 				ProcessChar(c);
 			}
+            SaveField();
 
-			SaveField();
+		    _index++;
 			return true;
 		}
+
+	    public string[] Headers
+	    {
+	        get
+	        {
+	            return _headers;
+	        }
+	    }
 
 	    public string[] Current
 	    {
@@ -339,8 +358,22 @@ namespace LibCSV
 	                return null;
 	            }
 
-	            string[] results = new string[_fields.Count];
-	            _fields.CopyTo(results, 0);
+	            string[] results = null;
+
+                if (_index == 1 && _dialect.HasHeader)
+                {
+                    if (_headers == null)
+                    {
+                        _headers = new string[_fields.Count];
+                        _fields.CopyTo(_headers, 0);
+                    }
+                }
+                else
+                {
+                    results = new string[_fields.Count];
+                    _fields.CopyTo(results, 0);                    
+                }
+
 	            return results;
 	        }
 	    }
