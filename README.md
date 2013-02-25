@@ -1,6 +1,10 @@
-# LibCSV #
+# LibCSV4Net #
 
 Library for reading and writing tabular (CSV) files.
+
+## NuGet package ##
+
+[NuGet package](http://nuget.org/packages/LibCSV4Net/)
 
 ## History ##
 
