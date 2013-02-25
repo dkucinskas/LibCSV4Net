@@ -1,12 +1,12 @@
-# LibCSV
+# LibCSV #
 
 Library for reading and writing tabular (CSV) files.
 
-## History
+## History ##
 
 This library started its life as port of Python CSV module. At the time I was searching for .Net library which could handle third party legacy CSV format. I didn't succeeded, so I created this library. It was tested with some huge data imports/exports.  
 
-## API
+## API ##
 
  * CSVReader is responsible for reading and parsing tabular data ([example of CSVReader in action](#csvreader-example)). Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
   * Next() - reads and parses next record (returns true on success)
@@ -14,11 +14,11 @@ This library started its life as port of Python CSV module. At the time I was se
   * Headers - return headers as array of strings
 
 
-## Example
+## Example ##
 
- * The following is simple example of using CSVAdapter
+### CSVAdapter example ###
 
-``` c#
+```c#
 
 // Define dialect
 public class ExcelDialect : Dialect
@@ -82,10 +82,9 @@ using (var writer = new StreamWriter(@"C:\test.csv"))
     }
 }
 ```
+### CSVReader example ###
 
-### CSVReader example
-
-``` c#
+```c#
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -125,10 +124,9 @@ namespace LibCSV4NetApp
 	}
 }
 ```
+### CSVWriter example ###
 
- * The following is simple example of using CSVWriter
-
-``` c#
+```c#
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -168,52 +166,46 @@ namespace LibCSV4NetApp
 		}
 	}
 }
+```
 
-## Changes
+## Changes ##
 
-### 0.7.2.1401
- * CSVReader method NextRecord renamed to Next.
- * CSVReader method GetCurrentRecord refactored to property Current.
- * Updated documentation to reflect this change.
+ * 0.7.2.1401
+  * CSVReader method NextRecord renamed to Next.
+  * CSVReader method GetCurrentRecord refactored to property Current.
+  * Updated documentation to reflect this change.
+ * 0.6.8.1105
+  * Added NuGet package
+ * 0.6.7.0838
+  * Code cleanup
+  * Headers must be specified explicitly in CSVDialect
+  * Updated examples in README.md
+ * 0.5
+  * Improved CSVAdapter
+  * Transformer supports transforming result for writing
+ * 0.4
+  * Added CSVWriter
+ * 0.3
+  * Changed IResultTransformer interface
+   * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
+ * 0.2
+  * Redesigned CSVReader interface
+   * Dialect must be set in constructor (removed property)
+   * Added header support to Dialect
+   * Added GetCurrentRecord
+   * Record is returned as string array
+  * Added IResultTransformer
+  * Added Adapter class
 
-### 0.6.8.1105
- * Added NuGet package
-
-### 0.6.7.0838
- * Code cleanup
- * Headers must be specified explicitly in CSVDialect
- * Updated examples in README.md
-
-### 0.5
- * Improved CSVAdapter
- * Transformer supports transforming result for writing
-
-### 0.4
- * Added CSVWriter
-
-### 0.3
- * Changed IResultTransformer interface
-  * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
- 
-### 0.2 
-
- * Redesigned CSVReader interface
-  * Dialect must be set in constructor (removed property)
-  * Added header support to Dialect
-  * Added GetCurrentRecord
-  * Record is returned as string array
- * Added IResultTransformer
- * Added Adapter class
-
-## License
+## License ##
 
 This is free software, and you are welcome to redistribute it under certain conditions; see LICENSE.txt for details.
 
-## Author contact
+## Author contact ##
 
 Darius Kucinskas d.kucinskas@gmail.com, http://blog-of-darius.blogspot.com/
 
-## Collaborators
+## Collaborators ##
 
 ssharunas ssharunas@yahoo.co.uk
 
