@@ -8,10 +8,11 @@ This library started its life as port of Python CSV module. At the time I was se
 
 ## API
 
- * CSVReader is responsible for reading and parsing tabular data. Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
+ * CSVReader is responsible for reading and parsing tabular data ([example of CSVReader in action](#csvreader_example)). Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
   * Next() - reads and parses next record (returns true on success)
   * Current - return current record as array of strings
   * Headers - return headers as array of strings
+
 
 ## Example
 
@@ -82,7 +83,7 @@ using (var writer = new StreamWriter(@"C:\test.csv"))
 }
 ```
 
- * The following is simple example of using CSVReader
+### The following is simple example of using CSVReader <a id="csvreader_example"></a>
 
 ``` c#
 using System;
