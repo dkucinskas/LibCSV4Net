@@ -8,7 +8,7 @@ using LibCSV.Exceptions;
 namespace LibCSV
 {
     /// <summary>
-    /// CSV Writer. Writes tabula data to stream.
+	/// CSVWriter class is responsible for writing tabular data to stream.
     /// </summary>
 	public class CSVWriter : IDisposable
 	{

@@ -12,11 +12,35 @@ This library started its life as port of Python CSV module. At the time I was se
 
 ## API ##
 
- * CSVReader is responsible for reading and parsing tabular data ([example of CSVReader in action](#csvreader-example)). Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
+ * [CSVReader class](#csvreader-class) is responsible for reading and parsing tabular data. ([CSVReader example](#csvreader-example))
+ * [CSVWriter class](#csvwriter-class) is responsible for writing tabular data to stream. ([CSVWriter example](#csvwriter-example))
+ * [CSVAdapter class](#csvadapter-class) is advanced csv reader/writer that supports read/write of all records and transformations. ([CSVAdapter example](#csvadapter-example))
+ * [Dialect class](#dialect-class) holds CSV parsing and generation options.
+ * [IDataTransformer interface](#idatatransformer-interface) transforms original data into tabular and vice versa.
+ 
+### CSVReader class ###
+
+CSVReader class is responsible for reading and parsing tabular data. Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
+
   * Next() - reads and parses next record (returns true on success)
   * Current - return current record as array of strings
   * Headers - return headers as array of strings
 
+### CSVWriter class ###
+
+CSVWriter class is responsible for writing tabular data to stream.
+
+### CSVAdapter class ###
+
+CSVAdapter class is advanced csv reader/writer that supports read/write of all records and transformations.
+
+### Dialect class ###
+
+Dialect class holds CSV parsing and generation options.
+
+### IDataTransformer interface ###
+
+IDataTransformer interface transforms original data into tabular and vice versa.
 
 ## Example ##
 

@@ -8,7 +8,9 @@ using LibCSV.Dialects;
 
 namespace LibCSV
 {
-	/// Advanced csv reader/writer that supports read/write of all records and transformations.
+	/// <summary>
+	/// CSVAdapter class is advanced csv reader/writer that supports read/write of all records and transformations.
+	/// </summary>
 	public class CSVAdapter : IDisposable
 	{
 		private bool _disposed;

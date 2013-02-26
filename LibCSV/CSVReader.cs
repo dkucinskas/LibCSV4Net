@@ -8,12 +8,12 @@ using LibCSV.Exceptions;
 namespace LibCSV
 {
     /// <summary>
-    /// CSV reader is responsible for reading and parsing tabular data. 
+    /// CSVReader class is responsible for reading and parsing tabular data.
     /// Parsing is controlled by set of rules defined in Dialect.
-    /// API exposes the following operations: 
-    ///  - Next() : reads and parses next record (returns true on success)
-    ///  - Current : return current record as array of strings
-    ///  - Headers : return headers as array of strings
+    /// API exposes the following operations:
+    /// - Next() : reads and parses next record (returns true on success)
+    /// - Current : return current record as array of strings
+    /// - Headers : return headers as array of strings
     /// </summary>
 	public class CSVReader : IDisposable
 	{
@@ -306,6 +306,10 @@ namespace LibCSV
 			_state = ParserState.StartOfRecord;
 		}
 
+        /// <summary>
+        /// Reads and parses next record.
+        /// </summary>
+        /// <returns>true on success otherwise false.</returns>
 		public bool Next()
 		{
 			if (_reader == null)
@@ -341,6 +345,12 @@ namespace LibCSV
 			return true;
 		}
 
+        /// <summary>
+        /// Returns the headers.
+        /// </summary>
+        /// <value>
+        /// The headers as string array.
+        /// </value>
 	    public string[] Headers
 	    {
 	        get
@@ -348,7 +358,13 @@ namespace LibCSV
 	            return _headers;
 	        }
 	    }
-
+        
+        /// <summary>
+        /// Returns the current record.
+        /// </summary>
+        /// <value>
+        /// The current record as string array.
+        /// </value>
 	    public string[] Current
 	    {
 	        get

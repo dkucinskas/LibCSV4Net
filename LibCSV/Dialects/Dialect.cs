@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace LibCSV.Dialects
 {
-	/// CSV Dialect holds CSV parsing and generation options.
+	/// <summary>
+	/// CSVDialect holds CSV parsing and generation options.
+	/// </summary>		
 	public class Dialect : IDisposable
 	{
 		public static IList<StyleDesc> QuoteStyles = new List<StyleDesc>()
