@@ -130,8 +130,6 @@ namespace LibCSV
 			}
 
 			reader.Dispose();
-			reader = null;
-
 			return transformer.TransformResult(results);
 		}
 
@@ -168,11 +166,9 @@ namespace LibCSV
                 }
 
                 writer.WriteRow(cells);
-                cells = null;
             }
 
 			writer.Dispose();
-			writer = null;
 		}
 
 		protected static object ConvertTo(Type type, string inject)

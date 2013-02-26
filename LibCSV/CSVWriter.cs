@@ -76,7 +76,6 @@ namespace LibCSV
 			}
 
 			_writer.WriteLine();
-			row = null;
 		}
 
 		protected virtual void WriteField(object field)
@@ -88,8 +87,10 @@ namespace LibCSV
 			{
 				WriteString((string)field);
 			}
-			else if (field is int || field is long ||
-					 field is double || field is float ||
+			else if (field is int || 
+			         field is long ||
+			         field is double || 
+			         field is float ||
 					 field is decimal)
 			{
 				WriteNumber(field);

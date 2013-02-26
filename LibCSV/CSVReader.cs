@@ -199,15 +199,13 @@ namespace LibCSV
 				SaveField();
 				_state = (IsNull(currentCharacter) ? ParserState.StartOfRecord : ParserState.EndOfRecord);
 			}
-			else if (_dialect.Strict == false)
+			else if (!_dialect.Strict) 
 			{
-				AddChar(currentCharacter);
+				AddChar (currentCharacter);
 				_state = ParserState.InField;
-			}
-			else
-			{
-				throw new BadFormatException(
-					string.Format("Bad format: '{0}' expected after '{1}'", _dialect.Delimiter, _dialect.Quote));
+			} else {
+				throw new BadFormatException (
+					string.Format ("Bad format: '{0}' expected after '{1}'", _dialect.Delimiter, _dialect.Quote));
 			}
 		}
 

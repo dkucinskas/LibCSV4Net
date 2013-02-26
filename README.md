@@ -16,7 +16,6 @@ This library started its life as port of Python CSV module. At the time I was se
  * [CSVWriter class](#csvwriter-class) is responsible for writing tabular data to stream. ([CSVWriter example](#csvwriter-example))
  * [CSVAdapter class](#csvadapter-class) is advanced csv reader/writer that supports read/write of all records and transformations. ([CSVAdapter example](#csvadapter-example))
  * [Dialect class](#dialect-class) holds CSV parsing and generation options.
- * [IDataTransformer interface](#idatatransformer-interface) transforms original data into tabular and vice versa.
  
 ### CSVReader class ###
 
@@ -35,12 +34,6 @@ CSVWriter class is responsible for writing tabular data to stream.
 CSVAdapter class is advanced csv reader/writer that supports read/write of all records and transformations.
 
 ### Dialect class ###
-
-Dialect class holds CSV parsing and generation options.
-
-### IDataTransformer interface ###
-
-IDataTransformer interface transforms original data into tabular and vice versa.
 
 ## Example ##
 
@@ -198,6 +191,11 @@ namespace LibCSV4NetApp
 
 ## Changes ##
 
+ * 0.8.0.1648
+  * Fixed issue #6: Dialect doesn't support object initializer.
+  * Fixed issue #5: If property 'HasHeader' is set to 'true', then CSVReader should not return header's row on method's 'GetCurrentRecord' invocation.
+  * Cleaned code
+  * Updated documentatio
  * 0.7.2.1401
   * CSVReader method NextRecord renamed to Next.
   * CSVReader method GetCurrentRecord refactored to property Current.

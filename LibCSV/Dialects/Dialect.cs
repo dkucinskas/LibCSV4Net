@@ -60,7 +60,7 @@ namespace LibCSV.Dialects
 			if (_delimiter == '\0')
 				_error = "Delimiter must be set";
 
-			if (CheckQuoting() == false)
+			if (!CheckQuoting ())
 				_error = "Bad \"quoting\" value";
 
 			if (_quoting != QuoteStyle.QuoteNone && _quote == '\0')
@@ -73,55 +73,55 @@ namespace LibCSV.Dialects
 		public bool DoubleQuote
 		{
 			get { return _doubleQuote; }
-			protected set { _doubleQuote = value; }
+			set { _doubleQuote = value; }
 		}
 
 		public string LineTerminator
 		{
 			get { return _lineTerminator; }
-			protected set { _lineTerminator = value; }
+			set { _lineTerminator = value; }
 		}
 
 		public char Delimiter
 		{
 			get { return _delimiter; }
-			protected set { _delimiter = value; }
+			set { _delimiter = value; }
 		}
 
 		public char Escape
 		{
 			get { return _escape; }
-			protected set { _escape = value; }
+			set { _escape = value; }
 		}
 
 		public bool SkipInitialSpace
 		{
 			get { return _skipInitialSpace; }
-			protected set { _skipInitialSpace = value; }
+			set { _skipInitialSpace = value; }
 		}
 
 		public char Quote
 		{
 			get { return _quote; }
-			protected set { _quote = value; }
+			set { _quote = value; }
 		}
 
 		public QuoteStyle Quoting
 		{
 			get { return _quoting; }
-			protected set { _quoting = value; }
+			set { _quoting = value; }
 		}
 
 		public bool Strict
 		{
 			get { return _strict; }
-			protected set { _strict = value; }
+			set { _strict = value; }
 		}
 
 		public string Error
 		{
-			get { return this._error; }
-			protected set { _error = value; }
+			get { return _error; }
+			set { _error = value; }
 		}
 
 		public bool HasHeader
