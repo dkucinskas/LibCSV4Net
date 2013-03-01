@@ -6,6 +6,10 @@ Library for reading and writing tabular (CSV) files.
 
 [NuGet package](http://nuget.org/packages/LibCSV4Net/)
 
+## Goal ##
+
+The goal is to have library, which does not depend on third party components is fast and simple to use.
+
 ## History ##
 
 This library started its life as port of Python CSV module. At the time I was searching for .Net library which could handle third party legacy CSV format. I didn't succeeded, so I created this library. It was tested with some huge data imports/exports.  
