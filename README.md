@@ -19,7 +19,7 @@ This library started its life as port of Python CSV module. At the time I was se
  * [CSVReader class](#csvreader-class) is responsible for reading and parsing tabular data. ([CSVReader example](#csvreader-example))
  * [CSVWriter class](#csvwriter-class) is responsible for writing tabular data to stream. ([CSVWriter example](#csvwriter-example))
  * [CSVAdapter class](#csvadapter-class) is advanced csv reader/writer that supports read/write of all records and transformations. ([CSVAdapter example](#csvadapter-example))
- * [Dialect class](#dialect-class) holds CSV parsing and generation options.
+ * [Dialect class](#dialect-class) defines rules for CSV parsing and generation options.
  
 ### CSVReader class ###
 
@@ -38,6 +38,8 @@ CSVWriter class is responsible for writing tabular data to stream.
 CSVAdapter class is advanced csv reader/writer that supports read/write of all records and transformations.
 
 ### Dialect class ###
+
+Dialect class defines rules for CSV parsing and generation options.
 
 ## Example ##
 
@@ -124,8 +126,16 @@ namespace LibCSV4NetApp
 		{
 			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2";
 			
-			Dialect dialect = new Dialect (
-				true, ';', '\'', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false);
+			var dialect = new TestDialect { 
+				DoubleQuote = true,
+				Delimiter = ';',
+				Quote = '\'',
+				Escape = '\\',
+				SkipInitialSpace = true,
+				LineTerminator = "\r\n",
+				Quoting = QuoteStyle.QuoteNone,
+				Strict = true,
+				HasHeader = false
 			
 			using (CSVReader reader = new CSVReader(dialect, new StringReader(input))) 
             {
@@ -165,8 +175,16 @@ namespace LibCSV4NetApp
 	{
 		public static void Main (string[] args)
 		{
-            Dialect dialect = new Dialect(
-                true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false);
+			var dialect = new TestDialect { 
+				DoubleQuote = true,
+				Delimiter = ';',
+				Quote = '\'',
+				Escape = '\\',
+				SkipInitialSpace = true,
+				LineTerminator = "\r\n",
+				Quoting = QuoteStyle.QuoteNone,
+				Strict = true,
+				HasHeader = false
 
             object[] data = new object[]
             {
