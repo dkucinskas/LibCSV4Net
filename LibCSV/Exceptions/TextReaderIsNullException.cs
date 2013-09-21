@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class TextReaderIsNullException : Exception
+	public class TextReaderIsNullException : CsvException
 	{
 		public TextReaderIsNullException()
-			: base("TextReader is null! Set TextReader before reading records!")
+			: base("TextReader is undefined! Set TextReader before reading records!")
 		{
 		}
 

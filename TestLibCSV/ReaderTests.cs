@@ -264,6 +264,19 @@ namespace TestLibCSV
 				}, dialect);
             }
         }
+
+		[Test]
+		public void Reader_ShouldInitializeHeaders_Ok()
+		{
+			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2";
+			using (var dialect = new Dialect(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, true))
+			{
+				using (var reader = new CSVReader(dialect, new StringReader(input)))
+				{
+					Assert.IsNotNull(reader.Headers);
+				}
+			}
+		}
 	}
 }
 

@@ -45,8 +45,10 @@ namespace TestLibCSV
 				while (reader.Next())
 				{
 					var record = reader.Current;
-					if (record != null && record.Length > 0)
-						results.Add(record);
+					if (record != null && record.Length > 0) 
+					{
+						results.Add (record);
+					}
 					record = null;
 				}
 			}

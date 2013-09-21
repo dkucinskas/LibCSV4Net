@@ -53,9 +53,10 @@ namespace LibCSV
             _dialect = dialect;
             _writer = writer;
 
-            //TODO: fix this //:~
-            if (headers == null)
-                throw new Exception();
+			if (_dialect.HasHeader && headers == null) 
+			{
+				throw new HeaderIsNullException("Provided header array is not initialized!");
+			}
 
             _headers = headers;
         }
@@ -93,18 +94,20 @@ namespace LibCSV
 
 			var row = 0;
 			string[] aliases = null;
+			if (_dialect.HasHeader) 
+			{
+				aliases = reader.Headers;
+				if (aliases == null) 
+				{
+					throw new HeaderIsNullException("Failed to read headers");
+				}
+			}
 
 			while (reader.Next())
 			{
 				var values = reader.Current;
 
-				if (row == 0 && _dialect.HasHeader)
-				{
-				    aliases = reader.Headers;
-                    if (aliases == null)
-                        throw new Exception();
-				}
-				else if (_types.Count > 0)
+				if (_types.Count > 0)
 				{
 					var record = new object[values.Length];
 					var count = values.Length;
@@ -135,9 +138,10 @@ namespace LibCSV
 
 		public void WriteAll(IEnumerable data, IDataTransformer transformer)
 		{
-            //TODO: fix this //:~
-            if (transformer == null)
-                throw new Exception();
+			if (transformer == null) 
+			{
+				throw new DataTransformerIsNullException();
+			}
 
 			var cellCount = -1;
 			var writer = CreateWriter();
@@ -158,10 +162,7 @@ namespace LibCSV
                     }
                     else if (cells.Length != cellCount)
                     {
-                        throw new Exception(string.Format(
-                            "Cell count in all rows must be equal. Tried insert row with cell count {0}, but " +
-                            "previously inserted row or header with cell count {1}.",
-                            cells.Length, cellCount));
+                        throw new NotEqualCellCountInRowsException(cells.Length, cellCount);
                     }
                 }
 
@@ -191,8 +192,11 @@ namespace LibCSV
 			else if (type == typeof(int))
 			{
 				int temp;
-				if (int.TryParse(inject, out temp))
+				if (int.TryParse (inject, out temp)) 
+				{
 					return temp;
+				}
+
 				return null;
 			}
 			else if (typeof(IConvertible).IsAssignableFrom(type))
@@ -214,11 +218,7 @@ namespace LibCSV
 				return parseMethod.Invoke(null, new object[] { inject });
 			}
 
-			throw new ArgumentException(string.Format(
-				"Cannot convert value '{0}' of type '{1}' to request type '{2}'",
-				inject,
-				inject.GetType(),
-				type));
+			throw new CannotConvertValueToRequestType(inject, inject.GetType(), type);
 		}
 
 		protected virtual void Dispose(bool disposing)

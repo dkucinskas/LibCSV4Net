@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class ReaderException : Exception
+	public class ReaderException : CsvException
 	{
 		public ReaderException()
 			: base("CSVReader internal error!")
