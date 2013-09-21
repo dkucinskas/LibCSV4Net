@@ -212,7 +212,9 @@ namespace LibCSV4NetApp
 ```
 
 ## Changes ##
-
+ * 0.9.21.1459
+  * Fixed issue #8 "Property Headers in CSVReader is not initialised".
+  * Refactored exceptions (all exceptions inherits from CsvException).
  * 0.8.0.1648
   * Fixed issue #6: Dialect doesn't support object initializer.
   * Fixed issue #5: If property 'HasHeader' is set to 'true', then CSVReader should not return header's row on method's 'GetCurrentRecord' invocation.
