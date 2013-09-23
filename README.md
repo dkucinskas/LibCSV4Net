@@ -217,10 +217,10 @@ namespace LibCSV4NetApp
   * Fixed issue #6: Dialect doesn't support object initializer.
   * Fixed issue #5: If property 'HasHeader' is set to 'true', then CSVReader should not return header's row on method's 'GetCurrentRecord' invocation.
   * Cleaned code
-  * Updated documentatio
+  * Updated documentation
  * 0.7.2.1401
   * CSVReader method NextRecord renamed to Next.
-  * CSVReader method GetCurrentRecord refactored to property Current.
+  * CSVReader method GetCurrentRecord re-factored to property Current.
   * Updated documentation to reflect this change.
  * 0.6.8.1105
   * Added NuGet package
