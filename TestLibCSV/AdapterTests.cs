@@ -137,9 +137,7 @@ namespace TestLibCSV
 				new[] {"4", "5", "6"}
 			};
 
-			IDataTransformer transformer = new NullTransformerForAdapterTesting(
-			headers,
-			data);
+			IDataTransformer transformer = new NullTransformerForAdapterTesting(headers, data);
 
 			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, true))
 			{
@@ -148,9 +146,26 @@ namespace TestLibCSV
 					adapter.WriteAll(data, transformer);
 				}
 			}
-
 		}
 
+		[Test]
+		[ExpectedException(typeof(DataTransformerIsNullException))]
+		public void WriteAll_ShouldThrowDataTransformerIsNullException_Ok()
+		{
+			var data = new[] 
+			{
+				new[] {"1", "2", "3"},
+				new[] {"4", "5", "6"}
+			};
+
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, false))
+			{
+				using (var adapter = new CSVAdapter(dialect, new StringWriter(), null))
+				{
+					adapter.WriteAll(data, null);
+				}
+			}
+		}
 	}
 }
 

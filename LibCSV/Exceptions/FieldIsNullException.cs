@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class FieldIsNullException : Exception
+	public class FieldIsNullException : CsvException
 	{
 		public FieldIsNullException()
 			: base("Field is null!")

@@ -43,28 +43,40 @@ namespace LibCSV
 
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
-			if (dialect != null)
+			if (dialect != null) 
+			{
 				_dialect = dialect;
+			}
 
 			GrowBuffer();
 
 		    if (_reader != null) return;
 
-		    if (!File.Exists(filename))
-		        throw new ReaderException(string.Format("Can't read from file: '{0}', file not exists!", filename));
+			if (!File.Exists (filename)) 
+			{
+				throw new ReaderException (string.Format ("Can't read from file: '{0}', file not exists!", filename));
+			}
 
 		    _reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
+
+			InitializeHeaders();
 		}
 
 		public CSVReader(Dialect dialect, TextReader reader)
 		{
-			if (dialect != null)
+			if (dialect != null) 
+			{
 				_dialect = dialect;
+			}
 
 			GrowBuffer();
 
-			if (reader != null)
+			if (reader != null) 
+			{
 				_reader = reader;
+			}
+
+			InitializeHeaders();
 		}
 
 		public Dialect Dialect
@@ -77,6 +89,19 @@ namespace LibCSV
 		{
 			get { return _disposed; }
 			private set { _disposed = value; }
+		}
+
+		protected void InitializeHeaders()
+		{
+			if (_dialect != null && _dialect.HasHeader) 
+			{
+				Next();
+				if (_headers == null && _fields.Count > 0)
+				{
+					_headers = new string[_fields.Count];
+					_fields.CopyTo(_headers, 0);
+				}
+			}
 		}
 
 		protected void SaveField()

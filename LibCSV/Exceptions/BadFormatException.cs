@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class BadFormatException : Exception
+	public class BadFormatException : CsvException
 	{
 		public BadFormatException()
 			: base("Bad format!")

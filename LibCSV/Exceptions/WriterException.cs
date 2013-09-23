@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace LibCSV
 {
 	[Serializable]
-	public class WriterException : Exception
+	public class WriterException : CsvException
 	{
 		public WriterException()
 		{

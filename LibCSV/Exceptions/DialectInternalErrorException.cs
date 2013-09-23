@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class DialectInternalErrorException : Exception
+	public class DialectInternalErrorException : CsvException
 	{
 		public DialectInternalErrorException()
 			: base("Dialect internal error!")

@@ -75,7 +75,7 @@ namespace LibCSV
 					_writer.Write(Dialect.Delimiter);
 			}
 
-			_writer.WriteLine();
+			_writer.Write(Dialect != null ? Dialect.LineTerminator : Environment.NewLine);
 		}
 
 		protected virtual void WriteField(object field)

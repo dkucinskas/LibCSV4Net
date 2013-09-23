@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace LibCSV.Exceptions
 {
 	[Serializable]
-	public class DialectIsNullException : Exception
+	public class DialectIsNullException : CsvException
 	{
 		public DialectIsNullException()
-			: base("Dialect is null! Set Dialect before parssing!")
+			: base("Dialect is undefined! Set Dialect before parssing!")
 		{
 		}
 
