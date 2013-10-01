@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.IO;
 using LibCSV;
@@ -72,6 +73,36 @@ namespace TestLibCSV
 			{
 				using (var adapter = new CSVAdapter(dialect, new StringReader(input)))
 				{
+					adapter.ReadAll(transformer);
+				}
+			}
+		}
+
+		[Test]
+		public void ReadAll_InputWithDateTime_Ok()
+		{
+			const string input = "Date;Header#2;Header#3\r\n00:15:00;2;3\r\n00:20:10;5;6";
+
+			IDataTransformer transformer = new NullTransformerForAdapterTesting(
+			new[]
+			{
+				"Date", 
+				"Header#2", 
+				"Header#3" 
+			},
+			new[]
+			{
+				new object[] {TimeSpan.FromMinutes(15), 2L, "3"},
+				new object[] {new TimeSpan(0, 20, 10), 5L, "6"}
+			});
+
+			using (var dialect = new Dialect(true, ';', '"', '\\', true, "\r\n", QuoteStyle.QuoteNone, true, true))
+			{
+				using (var adapter = new CSVAdapter(dialect, new StringReader(input)))
+				{
+					adapter.SetColumn("Date", typeof(TimeSpan));
+					adapter.SetColumn("Header#2", typeof(long));
+					adapter.SetColumn("Header#3", typeof(string));
 					adapter.ReadAll(transformer);
 				}
 			}

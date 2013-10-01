@@ -212,8 +212,8 @@ namespace LibCSV
 			}
 
 			//Maybe we have a Parse method ??
-			var parseMethod = type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public);
-			if (parseMethod != null)
+			var parseMethod = type.GetMethod("Parse", new[] { typeof(string) });
+			if (parseMethod != null && parseMethod.IsStatic && parseMethod.IsPublic)
 			{
 				return parseMethod.Invoke(null, new object[] { inject });
 			}
