@@ -236,8 +236,14 @@ namespace LibCSV
 
 		protected void ProcessEscapeInQuotedField(char currentCharacter)
 		{
-			if (IsNull(currentCharacter))
+			if (IsNull(currentCharacter) || currentCharacter == 'n')
 				currentCharacter = '\n';
+
+			if(currentCharacter == 'r')
+				currentCharacter = '\r';
+
+			if (currentCharacter == 't')
+				currentCharacter = '\t';
 
 			AddChar(currentCharacter);
 			_state = ParserState.InQuotedField;
