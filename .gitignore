@@ -28,3 +28,4 @@ test-results
 
 # StyleCope
 StyleCop.Cache
+/TestLibCSV/OpenCover/coverage.xml

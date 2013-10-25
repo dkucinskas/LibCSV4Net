@@ -7,113 +7,122 @@ using LibCSV.Exceptions;
 
 namespace LibCSV
 {
-    /// <summary>
-    /// CSVReader class is responsible for reading and parsing tabular data.
-    /// Parsing is controlled by set of rules defined in Dialect.
-    /// API exposes the following operations:
-    /// - Next() : reads and parses next record (returns true on success)
-    /// - Current : return current record as array of strings
-    /// - Headers : return headers as array of strings
-    /// </summary>
+	/// <summary>
+	/// CSVReader class is responsible for reading and parsing tabular data.
+	/// Parsing is controlled by set of rules defined in Dialect.
+	/// API exposes the following operations:
+	/// Next() : reads and parses next record (returns true on success)
+	/// Current : return current record as array of strings
+	/// Headers : return headers as array of strings
+	/// </summary>
 	public class CSVReader : IDisposable
 	{
-		internal const int MAX_CAPACITY = 8000;// 8000 * 2 ~4GB max memory for process in 32bit OS
-
 		internal const int DEFAULT_CAPACITY = 16;
-
+		
 		private TextReader _reader;
-
+		
 		private Dialect _dialect;
-
+		
 		private IList<string> _fields;
-
+		
 		private ParserState _state;
-
+		
 		private char[] _buffer;
 		
-        private int _capacity;
-
+		private int _capacity;
+		
 		private int _fieldLength;
-
+		
 		private bool _disposed;
-
-	    private long _index;
-
-	    private string[] _headers;
-
+		
+		private long _index;
+		
+		private string[] _headers;
+		
+		private bool _ownsReader = false;
+		
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
-			if (dialect != null) 
+			if (dialect == null) 
 			{
-				_dialect = dialect;
+				throw new DialectIsNullException();
 			}
-
+			_dialect = dialect;
+			
 			GrowBuffer();
-
-		    if (_reader != null) return;
-
-			if (!File.Exists (filename)) 
+			
+			if (_reader == null)
 			{
-				throw new ReaderException (string.Format ("Can't read from file: '{0}', file not exists!", filename));
+				if (string.IsNullOrEmpty(filename) || filename.Trim().Length < 1)
+				{
+					throw new FileNameIsNullOrEmptyException();
+				}
+				
+				if (!File.Exists(filename))
+				{
+					throw new CannotReadFromFileException(string.Format("Can't read from file: '{0}', file not exists!", filename));
+				}
+				
+				_ownsReader = true;
+				try
+				{
+					_reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
+				}
+				catch(Exception exp)
+				{
+					throw new CannotReadFromFileException(string.Format("Can't read from file: '{0}'!", filename), exp);
+				}
 			}
-
-		    _reader = new StreamReader(filename, Encoding.GetEncoding(encoding));
-
+			
 			InitializeHeaders();
 		}
-
+		
 		public CSVReader(Dialect dialect, TextReader reader)
 		{
-			if (dialect != null) 
+			if (dialect == null) 
 			{
-				_dialect = dialect;
+				throw new DialectIsNullException();
 			}
-
+			_dialect = dialect;
+			
 			GrowBuffer();
-
-			if (reader != null) 
+			
+			if (reader == null)
 			{
-				_reader = reader;
+				throw new TextReaderIsNullException();
 			}
-
+			_reader = reader;
+			
 			InitializeHeaders();
 		}
-
-		public Dialect Dialect
-		{
-			get { return _dialect; }
-			set { _dialect = value; }
-		}
-
+		
 		public bool IsDisposed
 		{
 			get { return _disposed; }
 			private set { _disposed = value; }
 		}
-
+		
 		protected void InitializeHeaders()
 		{
 			if (_dialect != null && _dialect.HasHeader) 
 			{
 				Next();
-				if (_headers == null && _fields.Count > 0)
+				
+				if (_headers == null && _fields != null && _fields.Count > 0)
 				{
 					_headers = new string[_fields.Count];
 					_fields.CopyTo(_headers, 0);
 				}
 			}
 		}
-
+		
 		protected void SaveField()
 		{
-			if (_buffer == null)
-				throw new FieldIsNullException();
-
 			_fields.Add(new string(_buffer, 0, _fieldLength));
 			_fieldLength = 0;
 			Array.Clear(_buffer, 0, _capacity);
 		}
-
+		
 		protected void GrowBuffer()
 		{
 			if (_capacity == 0)
@@ -126,87 +135,83 @@ namespace LibCSV
 				_capacity *= 2;
 				Array.Resize(ref _buffer, _capacity);
 			}
-
-			if (_buffer == null)
-				throw new ReaderException("Can't grow buffer.");
 		}
-
+		
 		protected void AddChar(char character)
 		{
-			if (_fieldLength >= MAX_CAPACITY)
-				throw new ArgumentOutOfRangeException(string.Format("Field is larger than field limit ({0})", MAX_CAPACITY));
-
 			if (_fieldLength == _capacity)
 			{
 				GrowBuffer();
 			}
-
+			
 			_buffer[_fieldLength] = character;
 			_fieldLength++;
 		}
-
+		
 		private static bool IsNull(char character)
 		{
 			return (character == '\0');
 		}
-
+		
 		private static bool IsEndOfLine(char character)
 		{
 			return (character == '\n' || character == '\r');
 		}
-
+		
 		private static bool IsNullOrEndOfLine(char character)
 		{
 			return (IsNull(character) || IsEndOfLine(character));
 		}
-
+		
 		protected void ProcessChar(char currentCharacter)
 		{
 			switch (_state)
 			{
 				case ParserState.StartOfRecord:
 					{
-						if (IsNull(currentCharacter))
-						{
-							break;
-						}
-					
-                        if (IsEndOfLine(currentCharacter))
-					    {
-					        _state = ParserState.EndOfRecord;
-					        break;
-					    }
-
-					    _state = ParserState.StartOfField;
+						//TODO: should we add ignore null byte attribute to dialect?
+//						if (IsNull(currentCharacter))
+//						{
+//							break;
+//						}
+						
+						//TODO: can this be executed?
+//						if (IsEndOfLine(currentCharacter))
+//						{
+//							_state = ParserState.EndOfRecord;
+//							break;
+//						}
+						
+						_state = ParserState.StartOfField;
 						goto case ParserState.StartOfField;
 					}
-
-			    case ParserState.StartOfField:
+				
+				case ParserState.StartOfField:
 					ProcessStartOfField(currentCharacter);
 					break;
-
+				
 				case ParserState.EscapedCharacter:
 					ProcessEscapedChar(currentCharacter);
 					break;
-
+				
 				case ParserState.InField:
 					ProcessInField(currentCharacter);
 					break;
-
+				
 				case ParserState.InQuotedField:
 					ProcessInQuotedField(currentCharacter);
 					break;
-
+				
 				case ParserState.EscapeInQuotedField:
 					ProcessEscapeInQuotedField(currentCharacter);
 					break;
-
+				
 				case ParserState.QuoteInQuotedField:
 					ProcessQuoteInQuotedField(currentCharacter);
 					break;
 			}
 		}
-
+		
 		protected void ProcessQuoteInQuotedField(char currentCharacter)
 		{
 			if (_dialect.Quoting != QuoteStyle.QuoteNone && currentCharacter == _dialect.Quote)
@@ -233,16 +238,18 @@ namespace LibCSV
 					string.Format ("Bad format: '{0}' expected after '{1}'", _dialect.Delimiter, _dialect.Quote));
 			}
 		}
-
+		
 		protected void ProcessEscapeInQuotedField(char currentCharacter)
 		{
 			if (IsNull(currentCharacter))
+			{
 				currentCharacter = '\n';
-
+			}
+			
 			AddChar(currentCharacter);
 			_state = ParserState.InQuotedField;
 		}
-
+		
 		protected void ProcessInQuotedField(char currentCharacter)
 		{
 			if (IsNull(currentCharacter))
@@ -261,7 +268,7 @@ namespace LibCSV
 				AddChar(currentCharacter);
 			}
 		}
-
+		
 		protected void ProcessInField(char currentCharacter)
 		{
 			if (IsNullOrEndOfLine(currentCharacter))
@@ -283,16 +290,16 @@ namespace LibCSV
 				AddChar(currentCharacter);
 			}
 		}
-
+		
 		protected void ProcessEscapedChar(char currentCharacter)
 		{
 			if (IsNull(currentCharacter))
 				currentCharacter = '\n';
-
+			
 			AddChar(currentCharacter);
 			_state = ParserState.InField;
 		}
-
+		
 		protected void ProcessStartOfField(char currentCharacter)
 		{
 			if (IsNullOrEndOfLine(currentCharacter))
@@ -321,129 +328,108 @@ namespace LibCSV
 				_state = ParserState.InField;
 			}
 		}
-
+		
 		protected void Reset()
 		{
 			_fields = new List<string>();
 			_fieldLength = 0;
 			_state = ParserState.StartOfRecord;
 		}
-
-        /// <summary>
-        /// Reads and parses next record.
-        /// </summary>
-        /// <returns>true on success otherwise false.</returns>
+		
+		/// <summary>
+		/// Reads and parses next record.
+		/// </summary>
+		/// <returns>true on success otherwise false.</returns>
 		public bool Next()
 		{
-			if (_reader == null)
-				throw new TextReaderIsNullException();
-
-			if (_dialect == null)
-				throw new DialectIsNullException();
-
-			if (!string.IsNullOrEmpty(_dialect.Error))
-				throw new DialectInternalErrorException("Dialect error: " + _dialect.Error);
-
-		    Reset();
-
+			Reset();
+			
 			var line = _reader.ReadLine();
-			if (string.IsNullOrEmpty(line))
+			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
+			{
 				return false;
-
+			}
+			
 			var length = line.Length;
-			if (length < 0)
-				return false;
-
 			for (var i = 0; i < length; i++)
 			{
-				var c = line[i];
-				if (IsNull(c))
+				if (IsNull(line[i]))
+				{
 					throw new BadFormatException("Line contains NULL byte!");
-
-				ProcessChar(c);
+				}
+				
+				ProcessChar(line[i]);
 			}
-            SaveField();
-
-		    _index++;
+			
+			SaveField();
+			
+			_index++;
 			return true;
 		}
-
-        /// <summary>
-        /// Returns the headers.
-        /// </summary>
-        /// <value>
-        /// The headers as string array.
-        /// </value>
-	    public string[] Headers
-	    {
-	        get
-	        {
-	            return _headers;
-	        }
-	    }
-        
-        /// <summary>
-        /// Returns the current record.
-        /// </summary>
-        /// <value>
-        /// The current record as string array.
-        /// </value>
-	    public string[] Current
-	    {
-	        get
-	        {
-	            if (_fields == null)
-	            {
-	                return null;
-	            }
-
-	            string[] results = null;
-
-                if (_index == 1 && _dialect.HasHeader)
-                {
-                    if (_headers == null)
-                    {
-                        _headers = new string[_fields.Count];
-                        _fields.CopyTo(_headers, 0);
-                    }
-                }
-                else
-                {
-                    results = new string[_fields.Count];
-                    _fields.CopyTo(results, 0);                    
-                }
-
-	            return results;
-	        }
-	    }
-
-	    protected virtual void Dispose(bool disposing)
+		
+		/// <summary>
+		/// Returns the headers as string array.
+		/// </summary>
+		public string[] Headers
+		{
+			get
+			{
+				return _headers;
+			}
+		}
+		
+		/// <summary>
+		/// Returns the current record as string array.
+		/// </summary>
+		public string[] Current
+		{
+			get
+			{
+				string[] results = null;
+				
+				if (_fields != null)
+				{
+					results = new string[_fields.Count];
+					_fields.CopyTo(results, 0);
+				}
+				
+				return results;
+			}
+		}
+		
+		protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
 			{
 				if (disposing)
 				{
+					if (_ownsReader && _reader != null)
+					{
+						_reader.Close();
+						_reader = null;
+					}
+					
 					if (_reader != null)
 					{
 						_reader.Dispose();
 					}
+					
 					_reader = null;
-
 					_dialect = null;
 					_fields = null;
 					_buffer = null;
 				}
-
+				
 				IsDisposed = true;
 			}
 		}
-
+		
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
+		
 		~CSVReader()
 		{
 			Dispose(false);

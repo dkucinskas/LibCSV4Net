@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LibCSV.Exceptions;
 
 namespace LibCSV.Dialects
 {
@@ -8,41 +9,31 @@ namespace LibCSV.Dialects
 	/// </summary>		
 	public class Dialect : IDisposable
 	{
-		public static IList<StyleDesc> QuoteStyles = new List<StyleDesc>()
-		{
-			new StyleDesc(QuoteStyle.QuoteMinimal, "QUOTE_MINIMAL"),
-			new StyleDesc(QuoteStyle.QuoteAll, "QUOTE_ALL"),
-			new StyleDesc(QuoteStyle.QuoteNonnumeric, "QUOTE_NONNUMERIC"),
-			new StyleDesc(QuoteStyle.QuoteNone, "QUOTE_NONE")
-		};
-
 		private bool _doubleQuote;  /* is " represented by ""? */
-
+		
 		private char _delimiter = '\0'; /* field separator */
-
+		
 		private char _quote; /* quote character */
-
+		
 		private char _escape = '\0';  /* escape character */
-
+		
 		private bool _skipInitialSpace = false; /* ignore spaces following delimiter? */
-
+		
 		private string _lineTerminator = null; /* string to write between records */
-
+		
 		private QuoteStyle _quoting = QuoteStyle.QuoteNone; /* style of quoting to write */
-
-		private bool _strict;                 /* raise exception on bad CSV */
-
-		private string _error = null;
-
+		
+		private bool _strict; /* raise exception on bad CSV */
+		
 		private bool _hasHeader = false;
-
+		
 		private bool _disposed = false;
-
+		
 		public Dialect ()
 			: this(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, false)
 		{
 		}
-
+		
 		public Dialect(bool doubleQuote, char delimiter, char quote, char escape,
 			bool skipInitialSpace, string lineTerminator, QuoteStyle quoting,
 			bool strict, bool hasHeader)
@@ -56,98 +47,88 @@ namespace LibCSV.Dialects
 			_quoting = quoting;
 			_strict = strict;
 			_hasHeader = hasHeader;
-
-			if (_delimiter == '\0')
-				_error = "Delimiter must be set";
-
-			if (!CheckQuoting ())
-				_error = "Bad \"quoting\" value";
-
-			if (_quoting != QuoteStyle.QuoteNone && _quote == '\0')
-				_error = "Quotechar must be set if quoting enabled";
-
-			if (_lineTerminator == null)
-				_error = "Line terminator must be set";
+			
+			Check();
 		}
-
+		
+		public void Check()
+		{
+			if (_delimiter == '\0')
+			{
+				throw new DialectInternalErrorException("Delimiter must be set");
+			}
+			
+			if (_quoting != QuoteStyle.QuoteNone && _quote == '\0')
+			{
+				throw new DialectInternalErrorException("Quotechar must be set if quoting enabled");
+			}
+			
+			if (_lineTerminator == null)
+			{
+				throw new DialectInternalErrorException("Line terminator must be set");
+			}
+		}
+		
 		public bool DoubleQuote
 		{
 			get { return _doubleQuote; }
 			set { _doubleQuote = value; }
 		}
-
+		
 		public string LineTerminator
 		{
 			get { return _lineTerminator; }
 			set { _lineTerminator = value; }
 		}
-
+		
 		public char Delimiter
 		{
 			get { return _delimiter; }
 			set { _delimiter = value; }
 		}
-
+		
 		public char Escape
 		{
 			get { return _escape; }
 			set { _escape = value; }
 		}
-
+		
 		public bool SkipInitialSpace
 		{
 			get { return _skipInitialSpace; }
 			set { _skipInitialSpace = value; }
 		}
-
+		
 		public char Quote
 		{
 			get { return _quote; }
 			set { _quote = value; }
 		}
-
+		
 		public QuoteStyle Quoting
 		{
 			get { return _quoting; }
 			set { _quoting = value; }
 		}
-
+		
 		public bool Strict
 		{
 			get { return _strict; }
 			set { _strict = value; }
 		}
-
-		public string Error
-		{
-			get { return _error; }
-			set { _error = value; }
-		}
-
+		
 		public bool HasHeader
 		{
 			get { return _hasHeader; }
 			set { _hasHeader = value; }
 		}
-
+		
 		public bool IsDisposed
 		{
 			get { return _disposed; }
 			private set { _disposed = value; }
 		}
-
-		public bool CheckQuoting()
-		{
-			var count = QuoteStyles.Count;
-			for (var i = 0; i < count; i++)
-			{
-				if (QuoteStyles[i].Style == _quoting)
-					return true;
-			}
-
-			return false;
-		}
-
+		
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
@@ -155,19 +136,18 @@ namespace LibCSV.Dialects
 				if (disposing)
 				{
 					_lineTerminator = null;
-					_error = null;
 				}
-
+				
 				IsDisposed = true;
 			}
 		}
-
+		
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
+		
 		~Dialect()
 		{
 			Dispose(false);

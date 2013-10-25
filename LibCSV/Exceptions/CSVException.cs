@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace LibCSV
+namespace LibCSV.Exceptions
 {
 	[Serializable]
 	public class CsvException : Exception

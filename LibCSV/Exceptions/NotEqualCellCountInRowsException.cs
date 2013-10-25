@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace LibCSV
+namespace LibCSV.Exceptions
 {
+	[Serializable]
 	public class NotEqualCellCountInRowsException : CsvException
 	{
 		public NotEqualCellCountInRowsException(int length, int cellCount)

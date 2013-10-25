@@ -7,77 +7,94 @@ using LibCSV.Exceptions;
 
 namespace LibCSV
 {
-    /// <summary>
+	/// <summary>
 	/// CSVWriter class is responsible for writing tabular data to stream.
-    /// </summary>
+	/// </summary>
 	public class CSVWriter : IDisposable
 	{
 		private TextWriter _writer;
-
-	    private Dialect _dialect;
-
+		
+		private Dialect _dialect;
+		
 		private bool _disposed;
-
-		public CSVWriter()
-		{
-		}
-
+		
+		private bool _ownsWriter = false;
+		
 		public CSVWriter(Dialect dialect, string filename, string encoding)
 		{
-			if (dialect != null)
-				_dialect = dialect;
-
+			if (dialect == null)
+			{
+				throw new DialectIsNullException("Set dialect first!");
+			}
+			dialect.Check();
+			_dialect = dialect;
+			
 			if (_writer == null)
 			{
-				if (filename.Trim().Length > 0)
-					if (!File.Exists(filename))
-						throw new WriterException(string.Format("Can't write to file: '{0}', file not exists!", filename));
-
-				_writer = new StreamWriter(filename, false, Encoding.GetEncoding(encoding));
+				if (string.IsNullOrEmpty(filename) || filename.Trim().Length < 1)
+				{
+					throw new FileNameIsNullOrEmptyException();
+				}
+				
+				if (!File.Exists(filename))
+				{
+					throw new CannotWriteToFileException(string.Format("Can't write to file: '{0}', file not exists!", filename));
+				}
+				
+				_ownsWriter = true;
+				try
+				{
+					_writer = new StreamWriter(filename, false, Encoding.GetEncoding(encoding));
+				}
+				catch(Exception exp)
+				{
+					throw new CannotWriteToFileException(string.Format("Can't write to file: '{0}'!", filename), exp);
+				}
 			}
 		}
-
+		
 		public CSVWriter(Dialect dialect, TextWriter writer)
 		{
-			if (dialect != null)
-				_dialect = dialect;
-
+			if (dialect == null)
+			{
+				throw new DialectIsNullException("Set dialect first!");
+			}
+			dialect.Check();
+			_dialect = dialect;
+			
 			if (writer != null)
+			{
 				_writer = writer;
+			}
 		}
-
-		public Dialect Dialect
-		{
-			get { return _dialect; }
-			set { _dialect = value; }
-		}
-
+		
 		public bool IsDisposed
 		{
 			get { return _disposed; }
 			private set { _disposed = value; }
 		}
-
+		
 		public void WriteRow(IList<object> row)
 		{
-			if (Dialect == null)
-				throw new DialectIsNullException("Set dialect first!");
-
 			if (row == null || row.Count < 1)
-				return;
-
+			{
+				throw new RowIsNullOrEmptyException();
+			}
+			
 			var count = row.Count;
 			for (var i = 0; i < count; i++)
 			{
 				WriteField(row[i]);
-
+				
 				if (i != count - 1)
-					_writer.Write(Dialect.Delimiter);
+				{
+					_writer.Write(_dialect.Delimiter);
+				}
 			}
-
-			_writer.Write(Dialect != null ? Dialect.LineTerminator : Environment.NewLine);
+			
+			_writer.Write(_dialect != null ? _dialect.LineTerminator : Environment.NewLine);
 		}
-
+		
 		protected virtual void WriteField(object field)
 		{
 			if (field == null)
@@ -87,11 +104,11 @@ namespace LibCSV
 			{
 				WriteString((string)field);
 			}
-			else if (field is int || 
-			         field is long ||
-			         field is double || 
-			         field is float ||
-					 field is decimal)
+			else if (field is int ||
+					field is long ||
+					field is double || 
+					field is float ||
+					field is decimal)
 			{
 				WriteNumber(field);
 			}
@@ -100,58 +117,74 @@ namespace LibCSV
 				WriteObject(field);
 			}
 		}
-
+		
 		protected virtual void WriteString(string field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QuoteNone)
+			if (_dialect.Quoting == QuoteStyle.QuoteNone)
+			{
 				_writer.Write(field);
+			}
 			else
 			{
-				_writer.Write(Dialect.Quote);
-
-				if (Dialect.DoubleQuote)
+				_writer.Write(_dialect.Quote);
+				
+				if (_dialect.DoubleQuote)
+				{
 					WriteEscapedString(field);
+				}
 				else
-					WriteString(field);
-
-				_writer.Write(Dialect.Quote);
+				{
+					_writer.Write(field);
+				}
+				
+				_writer.Write(_dialect.Quote);
 			}
 		}
-
+		
 		protected virtual void WriteNumber(object field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QuoteAll)
-				_writer.Write(Dialect.Quote);
-
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				_writer.Write(_dialect.Quote);
+			}
+			
 			_writer.Write(field);
-
-			if (Dialect.Quoting == QuoteStyle.QuoteAll)
-				_writer.Write(Dialect.Quote);
+			
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				_writer.Write(_dialect.Quote);
+			}
 		}
-
+		
 		protected virtual void WriteObject(object field)
 		{
-			if (Dialect.Quoting == QuoteStyle.QuoteAll)
-				_writer.Write(Dialect.Quote);
-
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				_writer.Write(_dialect.Quote);
+			}
+			
 			_writer.Write(field.ToString());
-
-			if (Dialect.Quoting == QuoteStyle.QuoteAll)
-				_writer.Write(Dialect.Quote);
+			
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				_writer.Write(_dialect.Quote);
+			}
 		}
-
+		
 		protected virtual void WriteEscapedString(string field)
 		{
 			var count = field.Length;
 			for (var i = 0; i < count; i++)
 			{
-				if (field[i] == Dialect.Quote)
-					_writer.Write(Dialect.Escape);
-
+				if (field[i] == _dialect.Quote)
+				{
+					_writer.Write(_dialect.Escape);
+				}
+				
 				_writer.Write(field[i]);
 			}
 		}
-
+		
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
@@ -159,18 +192,23 @@ namespace LibCSV
 				if (disposing)
 				{
 					_dialect = null;
+					if (_ownsWriter && _writer != null)
+					{
+						_writer.Close();
+						_writer = null;
+					}
 				}
-
+				
 				IsDisposed = true;
 			}
 		}
-
+		
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
+		
 		~CSVWriter()
 		{
 			Dispose(false);

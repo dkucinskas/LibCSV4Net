@@ -1,5 +1,6 @@
 using LibCSV;
 using LibCSV.Dialects;
+using LibCSV.Exceptions;
 using NUnit.Framework;
 
 namespace TestLibCSV
@@ -56,6 +57,46 @@ namespace TestLibCSV
 				Assert.AreEqual(dialect.Quoting, QuoteStyle.QuoteNone);
 				Assert.AreEqual(dialect.Strict, true);
 				Assert.AreEqual(dialect.HasHeader, false);
+			}
+		}
+		
+		[Test]
+		[ExpectedException(typeof(DialectInternalErrorException))]
+		public void Dialect_ShouldThrowDialectInternalErrorExceptionThenQuotingNotSet_Ok()
+		{
+			using (var dialect = new TestDialect { 
+				DoubleQuote = true,
+				Delimiter = ';',
+				Quote = '\0',
+				Escape = '\\',
+				SkipInitialSpace = true,
+				LineTerminator = "\r\n",
+				Quoting = QuoteStyle.QuoteAll,
+				Strict = true,
+				HasHeader = false
+			})
+			{
+				dialect.Check();
+			}
+		}
+		
+		[Test]
+		[ExpectedException(typeof(DialectInternalErrorException))]
+		public void Dialect_ShouldThrowDialectInternalErrorExceptionThenLineTerminatorNotSet_Ok()
+		{
+			using (var dialect = new TestDialect { 
+				DoubleQuote = true,
+				Delimiter = ';',
+				Quote = '\'',
+				Escape = '\\',
+				SkipInitialSpace = true,
+				LineTerminator = null,
+				Quoting = QuoteStyle.QuoteAll,
+				Strict = true,
+				HasHeader = false
+			})
+			{
+				dialect.Check();
 			}
 		}
 	}

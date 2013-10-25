@@ -36,7 +36,7 @@ namespace TestLibCSV
 				}
 			}
 		}
-
+		
 		public static void ReadTest(string input, IList<IList<object>> expect, Dialect dialect)
 		{
 			IList<IList<object>> results = new List<IList<object>>();
@@ -52,12 +52,12 @@ namespace TestLibCSV
 					record = null;
 				}
 			}
-
+			
 			Assert.AreEqual(expect, results);
-
+			
 			DisposeIListOfIListOfObjects(results);
 			results = null;
-
+			
 			DisposeIListOfIListOfObjects(expect);
 			expect = null;
 		}
