@@ -47,66 +47,73 @@ Dialect class defines rules for CSV parsing and generation options.
 
 ```c#
 
-// Define dialect
-public class ExcelDialect : Dialect
+// Define your custom Data transfer object
+public class Dto 
 {
-    public ExcelDialect()
-        : base(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, true)
-    {
-    }
+	public string Title { get; set; }
+	public DateTime CreatedOn { get; set; }
+	public decimal Total { get; set; } 
+	public string Description { get; set; }
 }
+
+// Define dialect
+var dialect = new Dialect 
+{
+	DoubleQuote = true,
+	Delimiter = ';',
+	Quote = '"',
+	Escape = '\0',
+	SkipInitialSpace = false,
+	LineTerminator = "\r\n",
+	Quoting = QuoteStyle.QuoteMinimal,
+	Strict = false,
+	HasHeader = false
+};
 
 // Define transformer from your custom type to tabular data.
 public class ExportTransformer : IDataTransformer
 {
-    public object TransformTuple(object[] tuple, string[] aliases)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public IEnumerable TransformResult(IEnumerable result)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public object[] TransformRow(object tuple)
-    {
-        var data = tuple as CustomDto;
-
-        if (data == null)
-        {
-            throw new Exception();
-        }
-
-        var row = new string[4];
-        row[0] = data.Tile;
-        row[1] = data.CreatedOn.ToString(CultureInfo.InvariantCulture);
-        row[2] = data.Total.ToString(CultureInfo.InvariantCulture);
-        row[3] = data.Description;
-
-        return row;
-    }
+	public object TransformTuple(object[] tuple, string[] aliases)
+	{
+		throw new System.NotImplementedException();
+	}
+		
+	public IEnumerable TransformResult(IEnumerable result)
+	{
+		throw new System.NotImplementedException();
+	}
+		
+	public object[] TransformRow(object tuple)
+	{
+		var data = tuple as Dto;
+		if (data == null)
+		{
+			throw new CsvException("Row is empty!");
+		}
+			
+		var row = new string[4];
+		row[0] = data.Title;
+		row[1] = data.CreatedOn.ToString(CultureInfo.InvariantCulture);
+		row[2] = data.Total.ToString(CultureInfo.InvariantCulture);
+		row[3] = data.Description;
+		return row;
+	}
 }
 
 // Now we will write all data to csv file.
-var data = new CustomDto[]
+var data = new[]
 {
-	new CustomDto { Title = "Title1", CreatedOn = DateTime.Now, Total = 1000.00, Description = "Description1" },
-	new CustomDto { Title = "Title2", CreatedOn = DateTime.Now, Total = 2000.00, Description = "Description2" },
-}
+	new Dto { Title = "Title1", CreatedOn = DateTime.Now, Total = 1000.00M, Description = "Description1" },
+	new Dto { Title = "Title2", CreatedOn = DateTime.Now, Total = 2000.00M, Description = "Description2" },
+};
 
+var headers = new[] { "Tile", "CreatedOn", "Total", "Description" };
 using (var writer = new StreamWriter(@"C:\test.csv"))
 {
-    using (var adapter = new CSVAdapter(new ExcelDialect(), writer, new string[]
-                                                                        {
-                                                                            "Tile", 
-																			"CreatedOn",
-                                                                            "Total",
-                                                                            "Description"
-                                                                        }))
-    {
-        adapter.WriteAll(data, new ExportTransformer());
-    }
+	using (var adapter = new CSVAdapter(dialect, writer, headers))
+	{
+		adapter.WriteAll(data, new ExportTransformer());
+	}
 }
 ```
 ### CSVReader example ###
