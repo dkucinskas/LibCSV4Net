@@ -119,49 +119,39 @@ using (var writer = new StreamWriter(@"C:\test.csv"))
 ### CSVReader example ###
 
 ```c#
-using System;
-using System.Collections.Generic;
-using System.IO;
-using LibCSV;
-using LibCSV.Dialects;
+string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6";
 
-namespace LibCSV4NetApp
+var dialect = new Dialect
 {
-	class MainClass
-	{
-		public static void Main (string[] args)
-		{
-			string input = "Header#1;Header#2;Header#3\r\n1;2;3\r\n4;5;6\r\ntest1;234;test2";
-			
-			var dialect = new TestDialect { 
-				DoubleQuote = true,
-				Delimiter = ';',
-				Quote = '\'',
-				Escape = '\\',
-				SkipInitialSpace = true,
-				LineTerminator = "\r\n",
-				Quoting = QuoteStyle.QuoteNone,
-				Strict = true,
-				HasHeader = false
-			
-			using (CSVReader reader = new CSVReader(dialect, new StringReader(input))) 
-            {
-				while (reader.Next()) 
-                {	
-					string[] record = reader.Current;
+	DoubleQuote = true,
+	Delimiter = ';',
+	Quote = '\'',
+	Escape = '\\',
+	SkipInitialSpace = true,
+	LineTerminator = "\r\n",
+	Quoting = QuoteStyle.QuoteNone,
+	Strict = true,
+	HasHeader = true
+};
 
-                    if (record != null && record.Length > 0)
-                    {
-                        foreach (string item in record)
-                            Console.Write(item + "| ");
-                        Console.WriteLine();
-                    }
-					
-					record = null;
-				}
+using (var reader = new CSVReader(dialect, new StringReader(input))) 
+{
+	foreach (var item in reader.Headers)
+	{
+		Console.Write(item + "| ");
+	}
+	Console.WriteLine();
+		
+	while (reader.Next())
+	{
+		var record = reader.Current;
+		if (record != null && record.Length > 0)
+		{
+			foreach (var item in record)
+			{
+				Console.Write(item + "| ");
 			}
-			
-			Console.ReadLine ();
+			Console.WriteLine();
 		}
 	}
 }
