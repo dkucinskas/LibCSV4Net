@@ -159,52 +159,40 @@ using (var reader = new CSVReader(dialect, new StringReader(input)))
 ### CSVWriter example ###
 
 ```c#
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using LibCSV;
-using LibCSV.Dialects;
-
-namespace LibCSV4NetApp
+var dialect = new Dialect 
 {
-	class MainClass
+	DoubleQuote = true,
+	Delimiter = ';',
+	Quote = '\'',
+	Escape = '\\',
+	SkipInitialSpace = true,
+	LineTerminator = "\r\n",
+	Quoting = QuoteStyle.QuoteNone,
+	Strict = true,
+	HasHeader = false
+};
+	
+object[] data = new[]
+{
+	new object[] { 123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0), null },
+	new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null }
+};
+	
+using (var memoryStream = new MemoryStream())
+{
+	using (TextWriter textWriter = new StreamWriter(memoryStream))
 	{
-		public static void Main (string[] args)
+		using (CSVWriter writer = new CSVWriter(dialect, textWriter))
 		{
-			var dialect = new TestDialect { 
-				DoubleQuote = true,
-				Delimiter = ';',
-				Quote = '\'',
-				Escape = '\\',
-				SkipInitialSpace = true,
-				LineTerminator = "\r\n",
-				Quoting = QuoteStyle.QuoteNone,
-				Strict = true,
-				HasHeader = false
-
-            object[] data = new object[]
-            {
-			    new object[] { 123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0), null },
-                new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null }
-            };
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                using (TextWriter textWriter = new StreamWriter(memoryStream))
-                using (CSVWriter writer = new CSVWriter(dialect, textWriter))
-                {
-                    foreach (object[] row in data)
-                        writer.WriteRow(row);
-                }
-
-                Encoding encoding = Encoding.ASCII;
-                Console.Write(encoding.GetString(memoryStream.ToArray()));
-            }
-
-			Console.ReadLine ();
+			foreach (object[] row in data)
+			{
+				writer.WriteRow(row);
+			}
 		}
 	}
+	
+	Encoding encoding = Encoding.ASCII;
+	Console.Write(encoding.GetString(memoryStream.ToArray()));
 }
 ```
 
