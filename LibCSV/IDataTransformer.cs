@@ -13,7 +13,7 @@ namespace LibCSV
 		/// <param name="tuple">Tabular data</param>
 		/// <param name="aliases">Column names</param>
 		/// <returns>Custom object</returns>
-		object TransformTuple(object[] tuple, string[] aliases);
+		object TransformTuple(string[] tuple, string[] aliases);
 		
 		/// <summary>
 		/// Transforms and aggregates all tabular data into

@@ -16,7 +16,7 @@ namespace TestLibCSV
 			_records = expectedResults;
 		}
 		
-		public object TransformTuple(object[] tuple, string[] aliases)
+		public object TransformTuple(string[] tuple, string[] aliases)
 		{
 			if (_aliases != null)
 			{
