@@ -86,7 +86,21 @@ namespace TestLibCSV
 				ReadTest(" a, b, c", new List<IList<object>> { new List<object> { " a", " b", " c" } }, dialect);
 			}
 		}
-		
+
+		[Test]
+		public void Next_EscapedSequecesRead_SequencesRead()
+		{
+			using (var dialect = new Dialect(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+			{
+				ReadTest(" a, b, c", new List<IList<object>> { new List<object> { " a", " b", " c" } }, dialect);
+			}
+
+			using (var dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+			{
+				ReadTest("a,\"b,c\\n\\t\\r\"\\", new List<IList<object>> { new List<object> { "a", "b,c\n\t\r\\" } }, dialect);
+			}
+		}
+
 		[Test]
 		public void Next_WithEscapeFlag_SymbolAreEscaped()
 		{
