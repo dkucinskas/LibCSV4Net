@@ -10,7 +10,7 @@ namespace LibCSV
 	/// <summary>
 	/// CSVWriter class is responsible for writing tabular data to stream.
 	/// </summary>
-	public class CSVWriter : IDisposable
+	public class CSVWriter : ICSVWriter
 	{
 		private TextWriter _writer;
 		

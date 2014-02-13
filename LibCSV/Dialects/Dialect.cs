@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using LibCSV.Exceptions;
 
 namespace LibCSV.Dialects
@@ -122,7 +123,27 @@ namespace LibCSV.Dialects
 			get { return _hasHeader; }
 			set { _hasHeader = value; }
 		}
-		
+
+		public virtual ICSVReader CreateReader(string filename, string encoding)
+		{
+			return new CSVReader(this, filename, encoding);
+		}
+
+		public virtual ICSVReader CreateReader(TextReader reader)
+		{
+			return new CSVReader(this, reader);
+		}
+
+		public virtual ICSVWriter CreateWriter(string filename, string encoding)
+		{
+			return new CSVWriter(this, filename, encoding);
+		}
+
+		public virtual ICSVWriter CreateWriter(TextWriter writer)
+		{
+			return new CSVWriter(this, writer);
+		}
+
 		public bool IsDisposed
 		{
 			get { return _disposed; }

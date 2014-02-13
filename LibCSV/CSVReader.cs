@@ -15,7 +15,7 @@ namespace LibCSV
 	/// Current : return current record as array of strings
 	/// Headers : return headers as array of strings
 	/// </summary>
-	public class CSVReader : IDisposable
+	public class CSVReader : ICSVReader
 	{
 		internal const int DEFAULT_CAPACITY = 16;
 		

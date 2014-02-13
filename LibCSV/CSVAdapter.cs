@@ -59,16 +59,14 @@ namespace LibCSV
 			private set { _disposed = value; }
 		}
 		
-		private CSVReader CreateReader()
+		private ICSVReader CreateReader()
 		{
-			return _reader == null ?
-				new CSVReader(_dialect, _filename, _encoding) : new CSVReader(_dialect, _reader);
+			return _reader == null ? _dialect.CreateReader(_filename, _encoding) : _dialect.CreateReader(_reader);
 		}
 		
-		private CSVWriter CreateWriter()
+		private ICSVWriter CreateWriter()
 		{
-			return _writer != null ?
-				new CSVWriter(_dialect, _writer) : new CSVWriter(_dialect, _filename, _encoding);
+			return _writer == null ? _dialect.CreateWriter(_filename, _encoding) : _dialect.CreateWriter(_writer);
 		}
 		
 		private void CheckHeaders()
