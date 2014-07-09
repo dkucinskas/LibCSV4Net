@@ -150,20 +150,17 @@ namespace TestLibCSV
 			
 			using (var dialect = new Dialect(true, ',', '\0', '\\', false, "\r\n", QuoteStyle.QuoteNone, false, false))
 			{
-				ReadTest("1,\",3,\",5", new List<IList<object>> { new List<object> { "1", "\"", "3", "\"", "5" } },
-					dialect);
+				ReadTest("1,\",3,\",5", new List<IList<object>> { new List<object> { "1", "\"", "3", "\"", "5" } }, dialect);
 			}
 			
 			using (var dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QuoteNone, false, false))
 			{
-				ReadTest("1,\",3,\",5", new List<IList<object>> { new List<object> { "1", "\"", "3", "\"", "5" } },
-					dialect);
+				ReadTest("1,\",3,\",5", new List<IList<object>> { new List<object> { "1", "\"", "3", "\"", "5" } }, dialect);
 			}
 			
 			using (var dialect = new Dialect(true, ',', '"', '\\', false, "\r\n", QuoteStyle.QuoteAll, false, false))
 			{
-				ReadTest("\"1\"\",3\",5", new List<IList<object>> { new List<object> { "1\",3", "5" } },
-					dialect);
+				ReadTest("\"1\"\",3\",5", new List<IList<object>> { new List<object> { "1\",3", "5" } }, dialect);
 			}
 		}
 		
