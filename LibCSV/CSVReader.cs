@@ -355,48 +355,48 @@ namespace LibCSV
 				return false;
 			}
 
-            var length = line.Length;
-            if (line != new string(_dialect.Delimiter, length))
-            {
-                for (var i = 0; i < length; i++)
-                {
-                    if (IsNull(line[i]))
-                    {
-                        throw new BadFormatException("Line contains NULL byte!");
-                    }
+			var length = line.Length;
+			if (line != new string(_dialect.Delimiter, length))
+			{
+				for (var i = 0; i < length; i++)
+				{
+					if (IsNull(line[i]))
+					{
+						throw new BadFormatException("Line contains NULL byte!");
+					}
 
-                    ProcessChar(line[i]);
-                }
+					ProcessChar(line[i]);
+				}
 
-                SaveField();
-		    }
+				SaveField();
+			}
 			
 			_index++;
 			return true;
 		}
 
-        /// <summary>
-        /// Returns the next line.
-        /// </summary>
-        public virtual String ReadLine()
-        {
-            StringBuilder sb = new StringBuilder();
-            bool inQuotes = false;
-            while (true)
-            {
-                int ch = _reader.Read();
-                if (ch == -1) break;
-                if (ch == _dialect.Quote) inQuotes = !inQuotes;
-                if (!inQuotes && (ch == '\r' || ch == '\n'))
-                {
-                    if (ch == '\r' && _reader.Peek() == '\n') _reader.Read();
-                    return sb.ToString();
-                }
-                sb.Append((char)ch);
-            }
-            if (sb.Length > 0) return sb.ToString();
-            return null;
-        } 
+		/// <summary>
+		/// Returns the next line.
+		/// </summary>
+		public virtual String ReadLine()
+		{
+			StringBuilder sb = new StringBuilder();
+			bool inQuotes = false;
+			while (true)
+			{
+				int ch = _reader.Read();
+				if (ch == -1) break;
+				if (ch == _dialect.Quote) inQuotes = !inQuotes;
+				if (!inQuotes && (ch == '\r' || ch == '\n'))
+				{
+					if (ch == '\r' && _reader.Peek() == '\n') _reader.Read();
+					return sb.ToString();
+				}
+				sb.Append((char)ch);
+			}
+			if (sb.Length > 0) return sb.ToString();
+			return null;
+		} 
 		
 		/// <summary>
 		/// Returns the headers as string array.
