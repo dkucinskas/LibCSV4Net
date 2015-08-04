@@ -355,9 +355,9 @@ namespace LibCSV
 				return false;
 			}
 
-		    if (line.Distinct().Count() > 1)
+            var length = line.Length;
+            if (line != new string(_dialect.Delimiter, length))
             {
-                var length = line.Length;
                 for (var i = 0; i < length; i++)
                 {
                     if (IsNull(line[i]))
