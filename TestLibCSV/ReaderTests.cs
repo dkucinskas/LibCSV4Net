@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -303,7 +303,7 @@ namespace TestLibCSV
 				}
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(DialectIsNullException))]
 		public void Reader_DialectIsNull_ThrowsException()
@@ -312,7 +312,7 @@ namespace TestLibCSV
 			{
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Bad format: ',' expected after '\"'")]
 		public void Reader_QuoteInFieldWithdDoubleQuoteAndStrictFlags_ReturnsNull()
@@ -320,6 +320,31 @@ namespace TestLibCSV
 			using (var dialect = new Dialect(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, true, false))
 			{
 				ReadTest("\"ab\"c", null, dialect);
+			}
+		}
+
+		[Test]
+		public void Reader_MultilineInQuotes_RetunsRecord()
+		{
+			using (var dialect = new Dialect(true, ',', '"','\0', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+			{
+				ReadTest("\"This is\r\nA multi-line\r\ninput\"", new List<IList<object>>
+				{
+					new List<object> { "This is\r\nA multi-line\r\ninput" }
+				}, dialect);
+			}
+		}
+
+		[Test]
+		public void Reader_SkipsEmptyLines_ReturnsRecords()
+		{
+			using (var dialect = new Dialect(true, ',', '"', '\0', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+			{
+				ReadTest("\"abc\",0,1\r\n,,\r\n,,\r\n\"def\",2,3", new List<IList<object>>
+				{
+					new List<object> { "abc", "0", "1" },
+					new List<object> { "def", "2", "3" }
+				}, dialect);
 			}
 		}
 		
