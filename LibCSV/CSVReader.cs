@@ -34,8 +34,6 @@ namespace LibCSV
 		
 		private int _fieldLength;
 		
-		private bool _disposed;
-		
 		private long _index;
 		
 		private string[] _headers;
@@ -97,11 +95,7 @@ namespace LibCSV
 			InitializeHeaders();
 		}
 		
-		public bool IsDisposed
-		{
-			get { return _disposed; }
-			private set { _disposed = value; }
-		}
+		public bool IsDisposed { get; private set; }
 		
 		protected void InitializeHeaders()
 		{

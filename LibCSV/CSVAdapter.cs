@@ -11,8 +11,6 @@ namespace LibCSV
 	/// </summary>
 	public class CSVAdapter : IDisposable
 	{
-		private bool _disposed;
-		
 		private string _filename;
 		
 		private string _encoding;
@@ -53,11 +51,7 @@ namespace LibCSV
 			CheckHeaders();
 		}
 		
-		public bool IsDisposed
-		{
-			get { return _disposed; }
-			private set { _disposed = value; }
-		}
+		public bool IsDisposed { get; private set; }
 		
 		private ICSVReader CreateReader()
 		{

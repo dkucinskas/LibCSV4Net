@@ -77,11 +77,12 @@
     <Compile Include="Dialects\Dialect.cs" />
     <Compile Include="CSVReader.cs" />
     <Compile Include="CSVAdapter.cs" />
-    <Compile Include="CSVWriter.cs" />
     <Compile Include="Exceptions\CSVException.cs" />
     <Compile Include="Exceptions\HeaderIsNullException.cs" />
     <Compile Include="Exceptions\DataTransformerIsNullException.cs" />
     <Compile Include="Exceptions\NotEqualCellCountInRowsException.cs" />
+    <Compile Include="TypeSwitch.cs" />
+    <Compile Include="CSVWriter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

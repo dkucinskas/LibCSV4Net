@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6951BFE2-7983-4FE2-92B0-BB8CD451E309}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>TestLibCSV</RootNamespace>
     <AssemblyName>CsvApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -68,7 +68,6 @@
     <Compile Include="..\LibCSV\AssemblyVersion.cs">
       <Link>AssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="NullTransformerForAdapterTesting.cs" />
     <Compile Include="ReaderTests.cs" />

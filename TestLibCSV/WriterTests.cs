@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
-
 using LibCSV;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
@@ -15,11 +14,11 @@ namespace TestLibCSV
 	public class WriterTests
 	{
 		[Test]
-		public void WriteRow_Numbers_WroteNumbers()
+		public void WriteRow_Convertibles_WroteConvertibles()
 		{
 			WriteAndTestRow(
-				new object[] { 123, 123.45, 10M, 1 },
-				"123;123.45;10;1\r\n", null);
+				new object[] { 123, 123.45, 10M, 1, new DateTime(2015, 10, 26, 10, 11, 12) },
+				"123;123.45;10;1;10/26/2015 10:11:12\r\n", null);
 		}
 		
 		[Test]
@@ -189,7 +188,17 @@ namespace TestLibCSV
 				}
 			}
 		}
-		
+
+		[Test]
+		public void WriteRow_ConvertiblesWithSpecifiedCulture_WroteConvertibles()
+		{
+			var ltCultureInfo = CultureInfo.GetCultureInfo ("lt-LT");
+
+			WriteAndTestRow(
+				new object[] { 123, 123.45, 10M, 1, new DateTime(2015, 10, 26, 10, 11, 12) },
+				"123;123,45;10;1;2015-10-26 10:11:12\r\n", null, ltCultureInfo);
+		}
+
 		internal class DumyObject
 		{
 			public DumyObject(int number)
@@ -205,7 +214,7 @@ namespace TestLibCSV
 			}
 		}
 		
-		private void WriteAndTestRow(object[] input, string output, Dialect dialect)
+		private void WriteAndTestRow(object[] input, string output, Dialect dialect, CultureInfo culture = null)
 		{
 			dialect = dialect ?? new Dialect(
 				true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false);
@@ -219,7 +228,7 @@ namespace TestLibCSV
 				string results;
 				using (var writer = new StringWriter())
 				{
-					using (var csvWriter = new CSVWriter(dialect, writer))
+					using (var csvWriter = new CSVWriter(dialect, writer, culture))
 					{
 						csvWriter.WriteRow(input);
 					}

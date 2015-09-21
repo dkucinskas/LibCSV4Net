@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
 using LibCSV;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
@@ -218,9 +217,9 @@ namespace TestLibCSV
 			}
 		}
 		
-		//TODO: should we add ignore null byte attribute to dialect?
+
 		[Test]
-		[Ignore]
+		[Ignore("TODO: should we add ignore null byte attribute to dialect?")]
 		public void Reader_ShouldSkipNullChar_Skiped()
 		{
 			using (var dialect = new Dialect(true, ';', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, false, false))

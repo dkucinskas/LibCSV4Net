@@ -197,6 +197,11 @@ using (var memoryStream = new MemoryStream())
 ```
 
 ## Changes ##
+ * 1.8.9.1102
+  * Fixed issue #14 It would be nice to have a possibility to pass IFormatProbider for CsvWriter to convert objects to strings with desired format.
+	Now you could provide CultureInfo into CsvWriter cunstructor and it will be used for formating of all Convertable(s) (IConvertible).
+ * 1.7.10.1401
+  * Integrated pull request: #15 Added multiline string and empty line skipping support by @emmorts
  * 0.9.21.1459
   * Fixed issue #8 "Property Headers in CSVReader is not initialised".
   * Refactored exceptions (all exceptions inherits from CsvException).
