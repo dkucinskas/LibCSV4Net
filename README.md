@@ -247,7 +247,7 @@ Darius Kucinskas d.kucinskas@gmail.com, http://blog-of-darius.blogspot.com/
 
 ## Accpeted one or more pull request from ##
 
-ssharunas ssharunas[at]yahoo[dot]co[dot]uk
-emmorts (Tomas Stropus) stropust[at]gmail[dot]com
+  * ssharunas ssharunas[at]yahoo[dot]co[dot]uk
+  * emmorts (Tomas Stropus) stropust[at]gmail[dot]com
 
 
