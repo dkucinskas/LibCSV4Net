@@ -245,8 +245,9 @@ This is free software, and you are welcome to redistribute it under certain cond
 
 Darius Kucinskas d.kucinskas@gmail.com, http://blog-of-darius.blogspot.com/
 
-## Collaborators ##
+## Accpeted one or more pull request from ##
 
-ssharunas ssharunas@yahoo.co.uk
+ssharunas ssharunas[at]yahoo[dot]co[dot]uk
+emmorts (Tomas Stropus) stropust[at]gmail[dot]com
 
 
