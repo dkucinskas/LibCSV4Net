@@ -8,7 +8,9 @@ using LibCSV.Dialects;
 using LibCSV.Exceptions;
 using NUnit.Framework;
 
-namespace TestLibCSV
+using static NUnit.Framework.Assert;
+
+namespace LibCSV.Tests
 {
 	[TestFixture]
 	public class WriterTests
@@ -67,7 +69,7 @@ namespace TestLibCSV
 				results = writer.ToString();
 			}
 			
-			Assert.AreEqual("\"1\";\"2\";\"3\";\"4\"\r\n", results);
+			AreEqual("\"1\";\"2\";\"3\";\"4\"\r\n", results);
 		}
 		
 		[Test]
@@ -87,7 +89,7 @@ namespace TestLibCSV
 				results = writer.ToString();
 			}
 			
-			Assert.AreEqual("\"\\\"\"\r\n", results);
+			AreEqual("\"\\\"\"\r\n", results);
 		}
 		
 		[Test]
@@ -107,92 +109,104 @@ namespace TestLibCSV
 				results = writer.ToString();
 			}
 			
-			Assert.AreEqual("\"s\"\r\n", results);
+			AreEqual("\"s\"\r\n", results);
 		}
 		
 		[Test]
-		[ExpectedException(typeof(DialectIsNullException))]
 		public void ConstructorFirst_DialectIsNull_ThrowsDialectIsNullException()
 		{
-			using (var writer = new CSVWriter(null, Guid.NewGuid().ToString(), "UTF-8"))
-			{
-			}
+            Throws<DialectIsNullException>(() =>
+            {
+                using (var writer = new CSVWriter(null, Guid.NewGuid().ToString(), "UTF-8"))
+                {
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(DialectIsNullException))]
 		public void ConstructorSecond_DialectIsNull_ThrowsDialectIsNullException()
 		{
-			using (var stringWriter = new StringWriter())
-			{
-				using (var writer = new CSVWriter(null, stringWriter))
-				{
-				}
-			}
+            Throws<DialectIsNullException>(() =>
+            {
+                using (var stringWriter = new StringWriter())
+                {
+                    using (var writer = new CSVWriter(null, stringWriter))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(FileNameIsNullOrEmptyException))]
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("  ")]
 		public void Constructor_FileNameIsNullOrEmpty_ThrowsFileNameIsNullOrEmptyException(string fileName)
 		{
-			using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-			{
-				using (var writer = new CSVWriter(dialect, fileName, "UTF-8"))
-				{
-				}
-			}
+            Throws<FileNameIsNullOrEmptyException>(() =>
+            {
+                using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                {
+                    using (var writer = new CSVWriter(dialect, fileName, "UTF-8"))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(CannotWriteToFileException))]
 		public void Constructor_FileNotExists_ThrowsCannotWriteToFileException()
 		{
-			using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-			{
-				using (var writer = new CSVWriter(dialect, "VeryLongNonExistingFileNameForTesting", "UTF-8"))
-				{
-				}
-			}
+            Throws<CannotWriteToFileException>(() =>
+            {
+                using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                {
+                    using (var writer = new CSVWriter(dialect, "VeryLongNonExistingFileNameForTesting", "UTF-8"))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(CannotWriteToFileException))]
 		public void Constructor_FileIsLocked_ThrowsCannotWriteToFileException()
 		{
-			using (var writer = new StreamWriter("test_write_file_locked.csv", false, Encoding.GetEncoding("utf-8")))
-			{
-				using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-				{
-					using (var csvWriter = new CSVWriter(dialect, "test_write_file_locked.csv", "UTF-8"))
-					{
-					}
-				}
-			}
+            Throws<CannotWriteToFileException>(() =>
+            {
+                using (var writer = new StreamWriter("test_write_file_locked.csv", false, Encoding.GetEncoding("utf-8")))
+                {
+                    using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                    {
+                        using (var csvWriter = new CSVWriter(dialect, "test_write_file_locked.csv", "UTF-8"))
+                        {
+                        }
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(RowIsNullOrEmptyException))]
 		public void WriteRow_RowIsNull_ThrowsRowIsNullOrEmptyException()
 		{
-			using (var stringWriter = new StringWriter())
-			{
-				using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-				{
-					using (var writer = new CSVWriter(dialect, stringWriter))
-					{
-						writer.WriteRow(null);
-					}
-				}
-			}
+           Throws<RowIsNullOrEmptyException>(() =>
+           {
+               using (var stringWriter = new StringWriter())
+               {
+                   using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                   {
+                       using (var writer = new CSVWriter(dialect, stringWriter))
+                       {
+                           writer.WriteRow(null);
+                       }
+                   }
+               }
+           });
 		}
 
 		[Test]
 		public void WriteRow_ConvertiblesWithSpecifiedCulture_WroteConvertibles()
 		{
-			var ltCultureInfo = CultureInfo.GetCultureInfo ("lt-LT");
+			var ltCultureInfo = CultureInfo.GetCultureInfo("lt-LT");
 
 			WriteAndTestRow(
 				new object[] { 123, 123.45, 10M, 1, new DateTime(2015, 10, 26, 10, 11, 12) },
@@ -236,7 +250,7 @@ namespace TestLibCSV
 					results = writer.ToString();
 				}
 				
-				Assert.AreEqual(output, results);
+				AreEqual(output, results);
 			}
 			finally
 			{

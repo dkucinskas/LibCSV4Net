@@ -5,7 +5,7 @@ using LibCSV;
 using LibCSV.Dialects;
 using NUnit.Framework;
 
-namespace TestLibCSV
+namespace LibCSV.Tests
 {
 	public class ReaderBaseTests
 	{
