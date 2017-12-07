@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\LibCSV.Tests.NetFramework\AdapterTests.cs" Link="AdapterTests.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\DialectTests.cs" Link="DialectTests.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\NullTransformerForAdapterTesting.cs" Link="NullTransformerForAdapterTesting.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\Program.cs" Link="Program.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\ReaderBaseTests.cs" Link="ReaderBaseTests.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\ReaderTests.cs" Link="ReaderTests.cs" />
+    <Compile Include="..\LibCSV.Tests.NetFramework\WriterTests.cs" Link="WriterTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\LibCSV.Tests.NetFramework\test.csv" Link="test.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\LibCSV.Tests.NetFramework\test_write_file_locked.csv" Link="test_write_file_locked.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibCSV\LibCSV.csproj" />
+  </ItemGroup>
+</Project>

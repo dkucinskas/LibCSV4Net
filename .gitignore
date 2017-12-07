@@ -1,31 +1,13 @@
-# Build and Object Folders
-bin/
-obj/
-Obj/
-
-#User Specific Files
-*.user
-*.suo
-*.userprefs
-*.pidb
-
-
-#Resource Caches
+obj
+bin
+deploy
 _ReSharper.*
-*.sln.cache
-
-#Nuget
-packages
+*.resharper
+*.suo
+*.cache
+~$*
+*.user
+.vs
+*.DS_Store
+*.lock.json
 *.nupkg
-
-#vim
-*~
-*.swp
-
-#unit tests
-TestResults
-test-results
-
-# StyleCope
-StyleCop.Cache
-/TestLibCSV/OpenCover/coverage.xml

@@ -1,89 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{88A1D156-2296-4A18-B5DE-FE35FDB23DF3}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>LibCSV</RootNamespace>
-    <AssemblyName>LibCSV</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <NoWin32Manifest>False</NoWin32Manifest>
-    <SignAssembly>False</SignAssembly>
-    <DelaySign>False</DelaySign>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <NoStdLib>False</NoStdLib>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+    <Authors>Darius Kucinskas</Authors>
+    <Company></Company>
+    <Product>LibCSV</Product>
+    <Description>Library for reading and writing tabular (CSV) files.</Description>
+    <Copyright>Copyright © 2011-2018, Darius Kucinskas and Contributors</Copyright>
+    <Version>2.0.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>Full</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-    <BaseAddress>4194304</BaseAddress>
-    <RegisterForComInterop>False</RegisterForComInterop>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <FileAlignment>4096</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>none</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
-    <BaseAddress>4194304</BaseAddress>
-    <RegisterForComInterop>False</RegisterForComInterop>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <FileAlignment>4096</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <BaseAddress>4194304</BaseAddress>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RegisterForComInterop>False</RegisterForComInterop>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <FileAlignment>4096</FileAlignment>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="AssemblyVersion.cs" />
-    <Compile Include="Exceptions\BadFormatException.cs" />
-    <Compile Include="Exceptions\CannotReadFromFileException.cs" />
-    <Compile Include="Exceptions\CannotWriteToFileException.cs" />
-    <Compile Include="Exceptions\FileNameIsNullOrEmptyException.cs" />
-    <Compile Include="Exceptions\DialectInternalErrorException.cs" />
-    <Compile Include="Exceptions\DialectIsNullException.cs" />
-    <Compile Include="Exceptions\RowIsNullOrEmptyException.cs" />
-    <Compile Include="Exceptions\TextReaderIsNullException.cs" />
-    <Compile Include="ICSVReader.cs" />
-    <Compile Include="ICSVWriter.cs" />
-    <Compile Include="IDataTransformer.cs" />
-    <Compile Include="ParserState.cs" />
-    <Compile Include="QuoteStyle.cs" />
-    <Compile Include="Dialects\Dialect.cs" />
-    <Compile Include="CSVReader.cs" />
-    <Compile Include="CSVAdapter.cs" />
-    <Compile Include="Exceptions\CSVException.cs" />
-    <Compile Include="Exceptions\HeaderIsNullException.cs" />
-    <Compile Include="Exceptions\DataTransformerIsNullException.cs" />
-    <Compile Include="Exceptions\NotEqualCellCountInRowsException.cs" />
-    <Compile Include="TypeSwitch.cs" />
-    <Compile Include="CSVWriter.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
 </Project>

@@ -6,7 +6,9 @@ using LibCSV.Dialects;
 using LibCSV.Exceptions;
 using NUnit.Framework;
 
-namespace TestLibCSV
+using static NUnit.Framework.Assert;
+
+namespace LibCSV.Tests
 {
 	[TestFixture]
 	public class ReaderTests : ReaderBaseTests
@@ -232,94 +234,111 @@ namespace TestLibCSV
 		}
 		
 		[Test]
-		[ExpectedException(typeof(TextReaderIsNullException))]
 		public void Reader_NullStream_ThrowsException()
 		{
-			using (var dialect = new Dialect())
-			{
-				using (var reader = new CSVReader(dialect, null))
-				{
-				}
-			}
+            Throws<TextReaderIsNullException>(() =>
+            {
+                using (var dialect = new Dialect())
+                {
+                    using (var reader = new CSVReader(dialect, null))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(DialectIsNullException))]
 		public void Reader_NullDialect_ThrowsException()
 		{
-			using (var reader = new CSVReader(null, new StringReader("1,2,3")))
-			{
-			}
+            Throws<DialectIsNullException>(() =>
+            {
+                using (var reader = new CSVReader(null, new StringReader("1,2,3")))
+                {
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(DialectInternalErrorException))]
 		public void Reader_DialectInternalError_ThrowsException()
 		{
-			using (var dialect = new Dialect(true, '\0', '"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, true, false))
-			{
-			}
+            Throws<DialectInternalErrorException>(() =>
+            {
+                using (var dialect = new Dialect(true, '\0', '"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, true, false))
+                {
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(FileNameIsNullOrEmptyException))]
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("  ")]
 		public void Reader_FileNameIsNullOrEmpty_ThrowsException(string fileName)
 		{
-			using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-			{
-				using (var csvReader = new CSVReader(dialect, fileName, "UTF-8")) 
-				{
-				}
-			}
+            Throws<FileNameIsNullOrEmptyException>(() =>
+            {
+                using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                {
+                    using (var csvReader = new CSVReader(dialect, fileName, "UTF-8"))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(CannotReadFromFileException))]
 		public void Reader_CannotReadFromFile_ThrowsException()
 		{
-			using (var dialect = new Dialect())
-			{
-				using (var reader = new CSVReader(dialect, "VeryLongNonExistingFileNameForTesting", "utf-8")) 
-				{
-				}
-			}
+            Throws<CannotReadFromFileException>(() =>
+            {
+                using (var dialect = new Dialect())
+                {
+                    using (var reader = new CSVReader(dialect, "VeryLongNonExistingFileNameForTesting", "utf-8"))
+                    {
+                    }
+                }
+            });
 		}
 		
 		[Test]
-		[ExpectedException(typeof(CannotReadFromFileException))]
 		public void Reader_FileIsLocked__ThrowsException()
 		{
-			using (var writer = new StreamWriter("test_write_file_locked.csv", false, Encoding.GetEncoding("utf-8")))
-			{
-				using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
-				{
-					using (var csvReader = new CSVReader(dialect, "test_write_file_locked.csv", "UTF-8"))
-					{
-					}
-				}
-			}
+            Throws<CannotReadFromFileException>(() =>
+            {
+                using (var writer = new StreamWriter("test_write_file_locked.csv", false, Encoding.GetEncoding("utf-8")))
+                {
+                    using (var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteMinimal, false, false))
+                    {
+                        using (var csvReader = new CSVReader(dialect, "test_write_file_locked.csv", "UTF-8"))
+                        {
+                        }
+                    }
+                }
+            });
 		}
 
 		[Test]
-		[ExpectedException(typeof(DialectIsNullException))]
 		public void Reader_DialectIsNull_ThrowsException()
 		{
-			using (var reader = new CSVReader(null, "VeryLongNonExistingFileNameForTesting", "UTF-8"))
-			{
-			}
+            Throws<DialectIsNullException>(() => 
+            {
+                using (var reader = new CSVReader(null, "VeryLongNonExistingFileNameForTesting", "UTF-8"))
+                {
+                }
+            });
 		}
 
 		[Test]
-		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Bad format: ',' expected after '\"'")]
 		public void Reader_QuoteInFieldWithdDoubleQuoteAndStrictFlags_ReturnsNull()
 		{
-			using (var dialect = new Dialect(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, true, false))
-			{
-				ReadTest("\"ab\"c", null, dialect);
-			}
+            Throws<BadFormatException>(() =>
+            {
+                using (var dialect = new Dialect(true, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, true, false))
+                {
+                    ReadTest("\"ab\"c", null, dialect);
+                }
+            }, "Bad format: ',' expected after '\"'");
+
 		}
 
 		[Test]
@@ -357,23 +376,28 @@ namespace TestLibCSV
 		}
 		
 		[Test]
-		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Line contains NULL byte!")]
 		public void Reader_NullByte_ThrowsException()
 		{
-			using (var dialect = new Dialect())
-			{
-				ReadTest("ab\0c", null, dialect);
-			}
+            Throws<BadFormatException>(() =>
+            {
+                using (var dialect = new Dialect())
+                {
+                    ReadTest("ab\0c", null, dialect);
+                }
+            }, "Line contains NULL byte!");
+
 		}
 		
 		[Test]
-		[ExpectedException(typeof(BadFormatException), ExpectedMessage = "Line contains NULL byte!")]
 		public void Reader_NullByteAndStrictDialect_ThrowException()
 		{
-			using (var dialect = new Dialect(false, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, true, false))
-			{
-				ReadTest("ab\0c", null, dialect);
-			}
+            Throws<BadFormatException>(() =>
+            {
+                using (var dialect = new Dialect(false, ',', '"', '\0', false, "\r\n", QuoteStyle.QuoteMinimal, true, false))
+                {
+                    ReadTest("ab\0c", null, dialect);
+                }
+            }, "Line contains NULL byte!");
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using LibCSV;
 using NUnit.Framework;
 
-namespace TestLibCSV
+namespace LibCSV.Tests
 {
 	internal class NullTransformerForAdapterTesting : IDataTransformer
 	{
