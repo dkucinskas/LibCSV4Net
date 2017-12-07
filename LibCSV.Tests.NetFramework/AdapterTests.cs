@@ -12,7 +12,7 @@ namespace LibCSV.Tests
 		[Test]
 		public void ReadAll_ExistingFileName_ReturnsRecords()
 		{
-            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "test.csv");
+            var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "test.csv");
 
 			var transformer = new NullTransformerForAdapterTesting
             (

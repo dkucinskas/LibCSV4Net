@@ -12,7 +12,7 @@ The goal is to have library, which does not depend on third party components is 
 
 ## History ##
 
-This library started its life as port of Python CSV module. At the time I was searching for .Net library which could handle third party legacy CSV format. I didn't succeeded, so I created this library. It was tested with some huge data imports/exports.  
+This library started its life as port of Python CSV module. At the time I was searching for .Net library which could handle third party legacy CSV format. I didn't succeeded, so I created this library. It was tested with some huge data imports/exports.
 
 ## API ##
 
@@ -20,7 +20,7 @@ This library started its life as port of Python CSV module. At the time I was se
  * [CSVWriter class](#csvwriter-class) is responsible for writing tabular data to stream. ([CSVWriter example](#csvwriter-example))
  * [CSVAdapter class](#csvadapter-class) is advanced csv reader/writer that supports read/write of all records and transformations. ([CSVAdapter example](#csvadapter-example))
  * [Dialect class](#dialect-class) defines rules for CSV parsing and generation options.
- 
+
 ### CSVReader class ###
 
 CSVReader class is responsible for reading and parsing tabular data. Parsing is controlled by set of rules defined in Dialect. Exposes the following operations:
@@ -48,16 +48,16 @@ Dialect class defines rules for CSV parsing and generation options.
 ```c#
 
 // Define your custom Data transfer object
-public class Dto 
+public class Dto
 {
 	public string Title { get; set; }
 	public DateTime CreatedOn { get; set; }
-	public decimal Total { get; set; } 
+	public decimal Total { get; set; }
 	public string Description { get; set; }
 }
 
 // Define dialect
-var dialect = new Dialect 
+var dialect = new Dialect
 {
 	DoubleQuote = true,
 	Delimiter = ';',
@@ -77,12 +77,12 @@ public class ExportTransformer : IDataTransformer
 	{
 		throw new System.NotImplementedException();
 	}
-		
+
 	public IEnumerable TransformResult(IEnumerable result)
 	{
 		throw new System.NotImplementedException();
 	}
-		
+
 	public object[] TransformRow(object tuple)
 	{
 		var data = tuple as Dto;
@@ -90,7 +90,7 @@ public class ExportTransformer : IDataTransformer
 		{
 			throw new CsvException("Row is empty!");
 		}
-			
+
 		var row = new string[4];
 		row[0] = data.Title;
 		row[1] = data.CreatedOn.ToString(CultureInfo.InvariantCulture);
@@ -134,14 +134,14 @@ var dialect = new Dialect
 	HasHeader = true
 };
 
-using (var reader = new CSVReader(dialect, new StringReader(input))) 
+using (var reader = new CSVReader(dialect, new StringReader(input)))
 {
 	foreach (var item in reader.Headers)
 	{
 		Console.Write(item + "| ");
 	}
 	Console.WriteLine();
-		
+
 	while (reader.Next())
 	{
 		var record = reader.Current;
@@ -159,7 +159,7 @@ using (var reader = new CSVReader(dialect, new StringReader(input)))
 ### CSVWriter example ###
 
 ```c#
-var dialect = new Dialect 
+var dialect = new Dialect
 {
 	DoubleQuote = true,
 	Delimiter = ';',
@@ -171,13 +171,13 @@ var dialect = new Dialect
 	Strict = true,
 	HasHeader = false
 };
-	
+
 object[] data = new[]
 {
 	new object[] { 123, 123.45, 10M, "This is string", new DateTime(2010, 9, 3, 0, 0, 0), null },
 	new object[] { 456, 456.78, 11M, "This is string too", new DateTime(2012, 04, 04, 0, 0, 0), null }
 };
-	
+
 using (var memoryStream = new MemoryStream())
 {
 	using (TextWriter textWriter = new StreamWriter(memoryStream))
@@ -190,54 +190,15 @@ using (var memoryStream = new MemoryStream())
 			}
 		}
 	}
-	
+
 	Encoding encoding = Encoding.ASCII;
 	Console.Write(encoding.GetString(memoryStream.ToArray()));
 }
 ```
 
 ## Changes ##
- * 2.0.0.0
-  * Ported to .NETStandart 2.0
- * 1.8.9.1102
-  * Fixed issue #14 It would be nice to have a possibility to pass IFormatProbider for CsvWriter to convert objects to strings with desired format.
-	Now you could provide CultureInfo into CsvWriter cunstructor and it will be used for formating of all Convertable(s) (IConvertible).
- * 1.7.10.1401
-  * Integrated pull request: #15 Added multiline string and empty line skipping support by @emmorts
- * 0.9.21.1459
-  * Fixed issue #8 "Property Headers in CSVReader is not initialised".
-  * Refactored exceptions (all exceptions inherits from CsvException).
- * 0.8.0.1648
-  * Fixed issue #6: Dialect doesn't support object initializer.
-  * Fixed issue #5: If property 'HasHeader' is set to 'true', then CSVReader should not return header's row on method's 'GetCurrentRecord' invocation.
-  * Cleaned code
-  * Updated documentation
- * 0.7.2.1401
-  * CSVReader method NextRecord renamed to Next.
-  * CSVReader method GetCurrentRecord re-factored to property Current.
-  * Updated documentation to reflect this change.
- * 0.6.8.1105
-  * Added NuGet package
- * 0.6.7.0838
-  * Code cleanup
-  * Headers must be specified explicitly in CSVDialect
-  * Updated examples in README.md
- * 0.5
-  * Improved CSVAdapter
-  * Transformer supports transforming result for writing
- * 0.4
-  * Added CSVWriter
- * 0.3
-  * Changed IResultTransformer interface
-   * IList TransformList(IList result) -> IEnumerable TransformResult(IEnumerable result);
- * 0.2
-  * Redesigned CSVReader interface
-   * Dialect must be set in constructor (removed property)
-   * Added header support to Dialect
-   * Added GetCurrentRecord
-   * Record is returned as string array
-  * Added IResultTransformer
-  * Added Adapter class
+
+See CHANGES.md for details.
 
 ## License ##
 
@@ -251,5 +212,4 @@ Darius Kucinskas d.kucinskas@gmail.com, http://blog-of-darius.blogspot.com/
 
   * ssharunas ssharunas[at]yahoo[dot]co[dot]uk
   * emmorts (Tomas Stropus) stropust[at]gmail[dot]com
-
-
+  * gedbac (Gediminas Backevicius) gediminas.backevicius[at]gmail[dot]com

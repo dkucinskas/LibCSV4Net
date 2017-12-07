@@ -5,19 +5,20 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{934FD741-E095-46BF-825E-9E1FDA8C8B3E}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGES.md = CHANGES.md
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibCSV", "LibCSV\LibCSV.csproj", "{88A1D156-2296-4A18-B5DE-FE35FDB23DF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCSV", "LibCSV\LibCSV.csproj", "{88A1D156-2296-4A18-B5DE-FE35FDB23DF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{FE3916F8-B22A-49EC-9ACD-12A54B260E01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7432C80F-F8DF-499C-8ACE-DA7BA1D5F037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibCSV.Tests.NetFramework", "LibCSV.Tests.NetFramework\LibCSV.Tests.NetFramework.csproj", "{7ACA7897-0B91-4CDF-BD14-95F87DA6A03E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCSV.Tests.NetFramework", "LibCSV.Tests.NetFramework\LibCSV.Tests.NetFramework.csproj", "{7ACA7897-0B91-4CDF-BD14-95F87DA6A03E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibCSV.Tests.NetCore", "LibCSV.Tests.NetCore\LibCSV.Tests.NetCore.csproj", "{54D488DA-87B8-43E3-9E38-2F5A69914C58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibCSV.Tests.NetCore", "LibCSV.Tests.NetCore\LibCSV.Tests.NetCore.csproj", "{54D488DA-87B8-43E3-9E38-2F5A69914C58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
