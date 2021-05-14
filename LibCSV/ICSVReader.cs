@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace LibCSV
 {
@@ -10,6 +11,8 @@ namespace LibCSV
 		/// <returns>true on success otherwise false.</returns>
 		/// 
 		bool Next();
+
+		Task<bool> NextAsync();
 
 		/// <summary>
 		/// Returns the headers as string array.

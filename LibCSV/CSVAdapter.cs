@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
 
@@ -22,7 +23,9 @@ namespace LibCSV
 		private Dialect _dialect;
 		
 		private string[] _headers;
-		
+
+		public bool IsDisposed { get; private set; }
+
 		public CSVAdapter(Dialect dialect, string filename, string encoding)
 		{
 			_dialect = dialect;
@@ -51,8 +54,6 @@ namespace LibCSV
 			CheckHeaders();
 		}
 		
-		public bool IsDisposed { get; private set; }
-		
 		private ICSVReader CreateReader()
 		{
 			return _reader == null ? _dialect.CreateReader(_filename, _encoding) : _dialect.CreateReader(_reader);
@@ -76,66 +77,149 @@ namespace LibCSV
 			IList results = new ArrayList();
 			
 			var reader = CreateReader();
-			
-			var row = 0;
-			string[] aliases = null;
-			if (_dialect.HasHeader) 
+
+			try
 			{
-				aliases = reader.Headers;
-				if (aliases == null) 
+				string[] aliases = null;
+				if (_dialect.HasHeader)
 				{
-					throw new HeaderIsNullException("Failed to read headers");
+					aliases = reader.Headers;
+					if (aliases == null)
+					{
+						throw new HeaderIsNullException("Failed to read headers");
+					}
+				}
+
+				while (reader.Next())
+				{
+					results.Add(transformer.TransformTuple(reader.Current, aliases));
 				}
 			}
-			
-			while (reader.Next())
-			{
-				var values = reader.Current;
-				results.Add(transformer.TransformTuple(values, aliases));
-				row++;
+			finally
+            {
+				reader.Dispose();
 			}
-			
-			reader.Dispose();
+
 			return transformer.TransformResult(results);
 		}
-		
+
+		public async Task<IEnumerable> ReadAllAsync(IDataTransformer transformer)
+		{
+			var results = new ArrayList();
+
+			var reader = CreateReader();
+
+			try
+			{
+				string[] aliases = null;
+				if (_dialect.HasHeader)
+				{
+					aliases = reader.Headers;
+					if (aliases == null)
+					{
+						throw new HeaderIsNullException("Failed to read headers");
+					}
+				}
+
+				while (await reader.NextAsync())
+				{
+					results.Add(transformer.TransformTuple(reader.Current, aliases));
+				}
+			} 
+			finally
+            {
+				reader.Dispose();
+			}
+
+			return transformer.TransformResult(results);
+		}
+
 		public void WriteAll(IEnumerable data, IDataTransformer transformer)
 		{
 			if (transformer == null) 
 			{
 				throw new DataTransformerIsNullException();
 			}
-			
-			var cellCount = -1;
+
 			var writer = CreateWriter();
-			
-			if (_dialect.HasHeader && _headers != null && _headers.Length > 0)
+
+			try
 			{
-				writer.WriteRow(_headers);
-			}
-			
-			foreach (var row in data)
-			{
-				var cells = transformer.TransformRow(row);
-				if (cells != null)
+
+				var cellCount = -1;
+
+				if (_dialect.HasHeader && _headers != null && _headers.Length > 0)
 				{
-					if (cellCount == -1)
-					{
-						cellCount = cells.Length;
-					}
-					
-					if (cells.Length != cellCount)
-					{
-						throw new NotEqualCellCountInRowsException(cells.Length, cellCount);
-					}
+					writer.WriteRow(_headers);
 				}
-				
-				writer.WriteRow(cells);
+
+				foreach (var row in data)
+				{
+					var cells = transformer.TransformRow(row);
+					if (cells != null)
+					{
+						if (cellCount == -1)
+						{
+							cellCount = cells.Length;
+						}
+
+						if (cells.Length != cellCount)
+						{
+							throw new NotEqualCellCountInRowsException(cells.Length, cellCount);
+						}
+					}
+
+					writer.WriteRow(cells);
+				}
+			} 
+			finally
+            {
+				writer.Dispose();
 			}
-			
-			writer.Dispose();
 		}
-		
+
+		public async Task WriteAllAsync(IEnumerable data, IDataTransformer transformer)
+		{
+			if (transformer == null)
+			{
+				throw new DataTransformerIsNullException();
+			}
+
+			var writer = CreateWriter();
+
+			try
+			{
+				var cellCount = -1;
+				if (_dialect.HasHeader && _headers != null && _headers.Length > 0)
+				{
+					writer.WriteRow(_headers);
+				}
+
+				foreach (var row in data)
+				{
+					var cells = transformer.TransformRow(row);
+					if (cells != null)
+					{
+						if (cellCount == -1)
+						{
+							cellCount = cells.Length;
+						}
+
+						if (cells.Length != cellCount)
+						{
+							throw new NotEqualCellCountInRowsException(cells.Length, cellCount);
+						}
+					}
+
+					await writer.WriteRowAsync(cells);
+				}
+			}
+			finally
+			{
+				writer.Dispose();
+			}
+		}
+
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!IsDisposed)
