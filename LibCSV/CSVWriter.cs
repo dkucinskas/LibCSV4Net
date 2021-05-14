@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
 
@@ -21,6 +22,8 @@ namespace LibCSV
 		private bool _ownsWriter = false;
 
 		private CultureInfo _culture = CultureInfo.InvariantCulture;
+
+		public bool IsDisposed { get; private set; }
 
 		public CSVWriter(Dialect dialect, string filename, string encoding, CultureInfo culture = null)
 		{
@@ -74,8 +77,6 @@ namespace LibCSV
 			_culture = culture ?? Thread.CurrentThread.CurrentCulture;
 		}
 
-		public bool IsDisposed { get; private set; }
-
 		public void WriteRow(IList<object> row)
 		{
 			if (row == null || row.Count < 1)
@@ -97,16 +98,67 @@ namespace LibCSV
 			_writer.Write(_dialect != null ? _dialect.LineTerminator : Environment.NewLine);
 		}
 
+		public async Task WriteRowAsync(IList<object> row)
+		{
+			if (row == null || row.Count < 1)
+			{
+				throw new RowIsNullOrEmptyException();
+			}
+
+			var count = row.Count;
+			for (var i = 0; i < count; i++)
+			{
+				await WriteFieldAsync(row[i]);
+
+				if (i != count - 1)
+				{
+					await _writer.WriteAsync(_dialect.Delimiter);
+				}
+			}
+
+			await _writer.WriteAsync(_dialect != null ? _dialect.LineTerminator : Environment.NewLine);
+		}
+
 		protected virtual void WriteField(object field)
 		{
-			if (field == null) {
+			if (field == null) 
+			{
 				return;
 			}
 
-			TypeSwitch.Do(field,
-				TypeSwitch.Case<string>(WriteString),
-				TypeSwitch.Case<IConvertible>(WriteConvertible),
-				TypeSwitch.Default(() => WriteObject(field)));
+			if (field is string str)
+			{
+				 WriteString(str);
+			}
+			else if (field is IConvertible convertible)
+			{
+				WriteConvertible(convertible);
+			}
+			else
+			{
+				WriteObject(field);
+			}
+		}
+
+		protected virtual async Task WriteFieldAsync(object field)
+		{
+			if (field == null)
+			{
+				return;
+			}
+
+			if (field is string str)
+            {
+				await WriteStringAsync(str);
+			}
+			else if (field is IConvertible convertible)
+            {
+				await WriteConvertibleAsync(convertible);
+			}
+			else
+            {
+				await WriteObjectAsync(field);
+			}
 		}
 
 		protected virtual void WriteString(string field)
@@ -132,6 +184,29 @@ namespace LibCSV
 			}
 		}
 
+		protected virtual async Task WriteStringAsync(string field)
+		{
+			if (_dialect.Quoting == QuoteStyle.QuoteNone)
+			{
+				await _writer.WriteAsync(field);
+			}
+			else
+			{
+				await _writer.WriteAsync(_dialect.Quote);
+
+				if (_dialect.DoubleQuote)
+				{
+					await WriteEscapedStringAsync(field);
+				}
+				else
+				{
+					await _writer.WriteAsync(field.ToString(_culture));
+				}
+
+				await _writer.WriteAsync(_dialect.Quote);
+			}
+		}
+
 		protected virtual void WriteConvertible<T>(T field)
 			where T : IConvertible
 		{
@@ -146,6 +221,21 @@ namespace LibCSV
 			if (_dialect.Quoting == QuoteStyle.QuoteAll)
 			{
 				_writer.Write(_dialect.Quote);
+			}
+		}
+
+		protected virtual async Task WriteConvertibleAsync(IConvertible field)
+		{
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				await _writer.WriteAsync(_dialect.Quote);
+			}
+
+			await _writer.WriteAsync(field.ToString(_culture));
+
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				await _writer.WriteAsync(_dialect.Quote);
 			}
 		}
 
@@ -164,6 +254,21 @@ namespace LibCSV
 			}
 		}
 
+		protected virtual async Task WriteObjectAsync(object field)
+		{
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				await _writer.WriteAsync(_dialect.Quote);
+			}
+
+			await _writer.WriteAsync(field.ToString());
+
+			if (_dialect.Quoting == QuoteStyle.QuoteAll)
+			{
+				await _writer.WriteAsync(_dialect.Quote);
+			}
+		}
+
 		protected virtual void WriteEscapedString(string field)
 		{
 			var count = field.Length;
@@ -175,6 +280,20 @@ namespace LibCSV
 				}
 
 				_writer.Write(field[i].ToString(_culture));
+			}
+		}
+
+		protected virtual async Task WriteEscapedStringAsync(string field)
+		{
+			var count = field.Length;
+			for (var i = 0; i < count; i++)
+			{
+				if (field[i] == _dialect.Quote)
+				{
+					await _writer.WriteAsync(_dialect.Escape);
+				}
+
+				await _writer.WriteAsync(field[i].ToString(_culture));
 			}
 		}
 

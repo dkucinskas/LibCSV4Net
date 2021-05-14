@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using LibCSV.Dialects;
 using LibCSV.Exceptions;
 
@@ -21,7 +22,9 @@ namespace LibCSV
 		internal const int DEFAULT_CAPACITY = 16;
 		
 		private TextReader _reader;
-		
+
+		private int _nextChar = -1;
+
 		private Dialect _dialect;
 		
 		private IList<string> _fields;
@@ -39,7 +42,9 @@ namespace LibCSV
 		private string[] _headers;
 		
 		private bool _ownsReader = false;
-		
+
+		public bool IsDisposed { get; private set; }
+
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
 			if (dialect == null) 
@@ -94,8 +99,6 @@ namespace LibCSV
 			
 			InitializeHeaders();
 		}
-		
-		public bool IsDisposed { get; private set; }
 		
 		protected void InitializeHeaders()
 		{
@@ -228,9 +231,10 @@ namespace LibCSV
 			{
 				AddChar (currentCharacter);
 				_state = ParserState.InField;
-			} else {
-				throw new BadFormatException (
-					string.Format ("Bad format: '{0}' expected after '{1}'", _dialect.Delimiter, _dialect.Quote));
+			} 
+			else 
+			{
+				throw new BadFormatException(string.Format ("Bad format: '{0}' expected after '{1}'", _dialect.Delimiter, _dialect.Quote));
 			}
 		}
 		
@@ -366,6 +370,37 @@ namespace LibCSV
 			}
 			
 			_index++;
+
+			return true;
+		}
+
+		public async Task<bool> NextAsync()
+		{
+			Reset();
+
+			var line = await ReadLineAsync();
+			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
+			{
+				return false;
+			}
+
+			var length = line.Length;
+			if (line != new string(_dialect.Delimiter, length))
+			{
+				for (var i = 0; i < length; i++)
+				{
+					if (IsNull(line[i]))
+					{
+						throw new BadFormatException("Line contains NULL byte!");
+					}
+
+					ProcessChar(line[i]);
+				}
+
+				SaveField();
+			}
+
+			_index++;
 			return true;
 		}
 
@@ -390,8 +425,84 @@ namespace LibCSV
 			}
 			if (sb.Length > 0) return sb.ToString();
 			return null;
-		} 
-		
+		}
+
+		public virtual async Task<string> ReadLineAsync()
+		{
+			var sb = new StringBuilder();
+			var inQuotes = false;
+
+			while (true)
+			{
+				int ch = await ReadAsync();
+				if (ch == -1)
+				{
+					break;
+				}
+
+				if (ch == _dialect.Quote) 
+				{ 
+					inQuotes = !inQuotes; 
+				}
+
+				if (!inQuotes && (ch == '\r' || ch == '\n'))
+				{
+					if (ch == '\r' && await PeekAsync() == '\n')
+					{
+						await ReadAsync();
+					}
+
+					return sb.ToString();
+				}
+
+				sb.Append((char)ch);
+			}
+
+			if (sb.Length > 0)
+			{
+				return sb.ToString();
+			}
+
+			return null;
+		}
+
+		private async Task<int> ReadAsync()
+        {
+			if (_nextChar != -1)
+            {
+				var value = _nextChar;
+				_nextChar = -1;
+				return value;
+			}
+
+			var buffer = new char[1];
+
+			var count = await _reader.ReadAsync(buffer, 0, 1);
+			if (count == 0)
+			{
+				return -1;
+			}
+
+			return buffer[0];
+		}
+
+		private async Task<int> PeekAsync()
+		{
+			var buffer = new char[1];
+
+			var count = await _reader.ReadAsync(buffer, 0, 1);
+			if (count == 0)
+			{
+				_nextChar = -1;
+			} 
+			else
+            {
+				_nextChar = buffer[0];
+			}
+
+			return _nextChar;
+		}
+
 		/// <summary>
 		/// Returns the headers as string array.
 		/// </summary>
