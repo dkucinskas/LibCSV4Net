@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.1.0
+
+  * Async/Await operations has been introduced
+
 ## 2.1.0.0
 
   * Ported to .NETStandart 2.0
