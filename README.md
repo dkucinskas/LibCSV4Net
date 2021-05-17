@@ -136,6 +136,8 @@ var dialect = new Dialect
 
 using (var reader = new CSVReader(dialect, new StringReader(input)))
 {
+	reader.Open();
+
 	foreach (var item in reader.Headers)
 	{
 		Console.Write(item + "| ");

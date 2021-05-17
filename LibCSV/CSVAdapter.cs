@@ -80,6 +80,8 @@ namespace LibCSV
 
 			try
 			{
+				reader.Open();
+
 				string[] aliases = null;
 				if (_dialect.HasHeader)
 				{
@@ -111,6 +113,8 @@ namespace LibCSV
 
 			try
 			{
+				await reader.OpenAsync();
+
 				string[] aliases = null;
 				if (_dialect.HasHeader)
 				{
@@ -145,6 +149,7 @@ namespace LibCSV
 
 			try
 			{
+				writer.Open();
 
 				var cellCount = -1;
 
@@ -189,6 +194,8 @@ namespace LibCSV
 
 			try
 			{
+				await writer.OpenAsync();
+
 				var cellCount = -1;
 				if (_dialect.HasHeader && _headers != null && _headers.Length > 0)
 				{

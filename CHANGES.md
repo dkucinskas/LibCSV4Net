@@ -1,5 +1,9 @@
 # Changes
 
+## 2.2.0.0
+
+  * BREAKING CHANGE: Open method has been introduced for csv reader and writer
+
 ## 2.1.1.0
 
   * Async/Await operations has been introduced

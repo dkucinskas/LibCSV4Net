@@ -6,15 +6,6 @@ namespace LibCSV
 	public interface ICSVReader : IDisposable
 	{
 		/// <summary>
-		/// Reads and parses next record.
-		/// </summary>
-		/// <returns>true on success otherwise false.</returns>
-		/// 
-		bool Next();
-
-		Task<bool> NextAsync();
-
-		/// <summary>
 		/// Returns the headers as string array.
 		/// </summary>
 		string[] Headers { get; }
@@ -23,5 +14,18 @@ namespace LibCSV
 		/// Returns the current record as string array.
 		/// </summary>
 		string[] Current { get; }
+
+		void Open();
+
+		Task OpenAsync();
+
+		/// <summary>
+		/// Reads and parses next record.
+		/// </summary>
+		/// <returns>true on success otherwise false.</returns>
+		/// 
+		bool Next();
+
+		Task<bool> NextAsync();
 	}
 }

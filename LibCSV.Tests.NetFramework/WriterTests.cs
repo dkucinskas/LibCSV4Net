@@ -98,6 +98,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					csvWriter.Open();
 					csvWriter.WriteRow(row);
 				}
 				
@@ -121,6 +122,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					await csvWriter.OpenAsync();
 					await csvWriter.WriteRowAsync(row);
 				}
 
@@ -141,6 +143,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					csvWriter.Open();
 					csvWriter.WriteRow(row);
 				}
 				
@@ -161,6 +164,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(true, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					await csvWriter.OpenAsync();
 					await csvWriter.WriteRowAsync(row);
 				}
 
@@ -181,6 +185,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(false, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					csvWriter.Open();
 					csvWriter.WriteRow(row);
 				}
 				
@@ -201,6 +206,7 @@ namespace LibCSV.Tests
 				var dialect = new Dialect(false, ';', '\"', '\\', true, "\r\n", QuoteStyle.QuoteAll, false, false);
 				using (var csvWriter = new CSVWriter(dialect, writer))
 				{
+					await csvWriter.OpenAsync();
 					await csvWriter.WriteRowAsync(row);
 				}
 
@@ -294,7 +300,9 @@ namespace LibCSV.Tests
                    {
                        using (var writer = new CSVWriter(dialect, stringWriter))
                        {
-                           writer.WriteRow(null);
+						   writer.Open();
+
+						   writer.WriteRow(null);
                        }
                    }
                }
@@ -312,6 +320,7 @@ namespace LibCSV.Tests
 					{
 						using (var writer = new CSVWriter(dialect, stringWriter))
 						{
+							await writer.OpenAsync();
 							await writer.WriteRowAsync(null);
 						}
 					}
@@ -370,6 +379,7 @@ namespace LibCSV.Tests
 				{
 					using (var csvWriter = new CSVWriter(dialect, writer, culture))
 					{
+						csvWriter.Open();
 						csvWriter.WriteRow(input);
 					}
 					
@@ -400,6 +410,7 @@ namespace LibCSV.Tests
 				{
 					using (var csvWriter = new CSVWriter(dialect, writer, culture))
 					{
+						await csvWriter.OpenAsync();
 						await csvWriter.WriteRowAsync(input);
 					}
 

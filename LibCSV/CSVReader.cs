@@ -37,13 +37,47 @@ namespace LibCSV
 		
 		private int _fieldLength;
 		
-		private long _index;
-		
+		private bool _opened = false;
+
 		private string[] _headers;
 		
 		private bool _ownsReader = false;
 
 		public bool IsDisposed { get; private set; }
+
+		/// <summary>
+		/// Returns the headers as string array.
+		/// </summary>
+		public string[] Headers
+		{
+			get
+			{
+				ThrowIfClosed();
+
+				return _headers;
+			}
+		}
+
+		/// <summary>
+		/// Returns the current record as string array.
+		/// </summary>
+		public string[] Current
+		{
+			get
+			{
+				ThrowIfClosed();
+
+				string[] results = null;
+
+				if (_fields != null)
+				{
+					results = new string[_fields.Count];
+					_fields.CopyTo(results, 0);
+				}
+
+				return results;
+			}
+		}
 
 		public CSVReader(Dialect dialect, string filename, string encoding)
 		{
@@ -77,8 +111,6 @@ namespace LibCSV
 					throw new CannotReadFromFileException(string.Format("Can't read from file: '{0}'!", filename), exp);
 				}
 			}
-			
-			InitializeHeaders();
 		}
 		
 		public CSVReader(Dialect dialect, TextReader reader)
@@ -96,24 +128,112 @@ namespace LibCSV
 				throw new TextReaderIsNullException();
 			}
 			_reader = reader;
-			
-			InitializeHeaders();
 		}
-		
-		protected void InitializeHeaders()
+
+		public void Open()
 		{
-			if (_dialect != null && _dialect.HasHeader) 
+			if (!_opened)
 			{
-				Next();
-				
-				if (_headers == null && _fields != null && _fields.Count > 0)
+				_opened = true;
+
+				if (_dialect != null && _dialect.HasHeader && _headers == null)
 				{
-					_headers = new string[_fields.Count];
-					_fields.CopyTo(_headers, 0);
+					Next();
+
+					if (_fields?.Count > 0)
+					{
+						_headers = new string[_fields.Count];
+						_fields.CopyTo(_headers, 0);
+					}
 				}
 			}
 		}
-		
+
+		public async Task OpenAsync()
+		{
+			if (!_opened)
+			{
+				_opened = true;
+
+				if (_dialect != null && _dialect.HasHeader && _headers == null)
+				{
+					await NextAsync();
+
+					if (_fields?.Count > 0)
+					{
+						_headers = new string[_fields.Count];
+						_fields.CopyTo(_headers, 0);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Reads and parses next record.
+		/// </summary>
+		/// <returns>true on success otherwise false.</returns>
+		public bool Next()
+		{
+			ThrowIfClosed();
+
+			Reset();
+
+			var line = ReadLine();
+			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
+			{
+				return false;
+			}
+
+			var length = line.Length;
+			if (line != new string(_dialect.Delimiter, length))
+			{
+				for (var i = 0; i < length; i++)
+				{
+					if (IsNull(line[i]))
+					{
+						throw new BadFormatException("Line contains NULL byte!");
+					}
+
+					ProcessChar(line[i]);
+				}
+
+				SaveField();
+			}
+
+			return true;
+		}
+
+		public async Task<bool> NextAsync()
+		{
+			ThrowIfClosed();
+
+			Reset();
+
+			var line = await ReadLineAsync();
+			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
+			{
+				return false;
+			}
+
+			var length = line.Length;
+			if (line != new string(_dialect.Delimiter, length))
+			{
+				for (var i = 0; i < length; i++)
+				{
+					if (IsNull(line[i]))
+					{
+						throw new BadFormatException("Line contains NULL byte!");
+					}
+
+					ProcessChar(line[i]);
+				}
+
+				SaveField();
+			}
+
+			return true;
+		}
+
 		protected void SaveField()
 		{
 			_fields.Add(new string(_buffer, 0, _fieldLength));
@@ -338,76 +458,11 @@ namespace LibCSV
 			_fieldLength = 0;
 			_state = ParserState.StartOfRecord;
 		}
-		
-		/// <summary>
-		/// Reads and parses next record.
-		/// </summary>
-		/// <returns>true on success otherwise false.</returns>
-		public bool Next()
-		{
-			Reset();
-			
-			var line = ReadLine();
-			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
-			{
-				return false;
-			}
-
-			var length = line.Length;
-			if (line != new string(_dialect.Delimiter, length))
-			{
-				for (var i = 0; i < length; i++)
-				{
-					if (IsNull(line[i]))
-					{
-						throw new BadFormatException("Line contains NULL byte!");
-					}
-
-					ProcessChar(line[i]);
-				}
-
-				SaveField();
-			}
-			
-			_index++;
-
-			return true;
-		}
-
-		public async Task<bool> NextAsync()
-		{
-			Reset();
-
-			var line = await ReadLineAsync();
-			if (string.IsNullOrEmpty(line) || line.Trim().Length < 1)
-			{
-				return false;
-			}
-
-			var length = line.Length;
-			if (line != new string(_dialect.Delimiter, length))
-			{
-				for (var i = 0; i < length; i++)
-				{
-					if (IsNull(line[i]))
-					{
-						throw new BadFormatException("Line contains NULL byte!");
-					}
-
-					ProcessChar(line[i]);
-				}
-
-				SaveField();
-			}
-
-			_index++;
-			return true;
-		}
 
 		/// <summary>
 		/// Returns the next line.
 		/// </summary>
-		public virtual String ReadLine()
+		protected virtual String ReadLine()
 		{
 			StringBuilder sb = new StringBuilder();
 			bool inQuotes = false;
@@ -427,7 +482,7 @@ namespace LibCSV
 			return null;
 		}
 
-		public virtual async Task<string> ReadLineAsync()
+		protected virtual async Task<string> ReadLineAsync()
 		{
 			var sb = new StringBuilder();
 			var inQuotes = false;
@@ -503,35 +558,13 @@ namespace LibCSV
 			return _nextChar;
 		}
 
-		/// <summary>
-		/// Returns the headers as string array.
-		/// </summary>
-		public string[] Headers
-		{
-			get
-			{
-				return _headers;
+		protected void ThrowIfClosed()
+        {
+			if (!_opened || IsDisposed)
+            {
+				throw new CsvException("CSV reader is closed");
 			}
-		}
-		
-		/// <summary>
-		/// Returns the current record as string array.
-		/// </summary>
-		public string[] Current
-		{
-			get
-			{
-				string[] results = null;
-				
-				if (_fields != null)
-				{
-					results = new string[_fields.Count];
-					_fields.CopyTo(results, 0);
-				}
-				
-				return results;
-			}
-		}
+        }
 		
 		protected virtual void Dispose(bool disposing)
 		{
