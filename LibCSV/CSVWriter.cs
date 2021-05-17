@@ -15,6 +15,8 @@ namespace LibCSV
 	/// </summary>
 	public class CSVWriter : ICSVWriter
 	{
+		private bool _opened = false;
+
 		private TextWriter _writer;
 
 		private Dialect _dialect;
@@ -77,8 +79,19 @@ namespace LibCSV
 			_culture = culture ?? Thread.CurrentThread.CurrentCulture;
 		}
 
+		public void Open() { _opened = true; }
+
+		public async Task OpenAsync()
+		{ 
+			_opened = true;
+
+			await Task.CompletedTask;
+		}
+
 		public void WriteRow(IList<object> row)
 		{
+			ThrowIfClosed();
+
 			if (row == null || row.Count < 1)
 			{
 				throw new RowIsNullOrEmptyException();
@@ -100,6 +113,8 @@ namespace LibCSV
 
 		public async Task WriteRowAsync(IList<object> row)
 		{
+			ThrowIfClosed();
+
 			if (row == null || row.Count < 1)
 			{
 				throw new RowIsNullOrEmptyException();
@@ -294,6 +309,14 @@ namespace LibCSV
 				}
 
 				await _writer.WriteAsync(field[i].ToString(_culture));
+			}
+		}
+
+		protected void ThrowIfClosed()
+		{
+			if (!_opened || IsDisposed)
+			{
+				throw new CsvException("CSV writer is closed");
 			}
 		}
 

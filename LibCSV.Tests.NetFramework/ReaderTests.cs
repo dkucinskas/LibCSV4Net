@@ -38,6 +38,8 @@ namespace LibCSV.Tests
 			{
 				using (var reader = new CSVReader(dialect, new StringReader("a,b,c")))
 				{
+					reader.Open();
+
 					reader.Next();
 					var current = reader.Current;
 					
@@ -54,6 +56,8 @@ namespace LibCSV.Tests
 			{
 				using (var reader = new CSVReader(dialect, new StringReader("a,b,c")))
 				{
+					reader.Open();
+
 					await reader.NextAsync();
 					var current = reader.Current;
 
@@ -379,6 +383,8 @@ namespace LibCSV.Tests
 			{
 				using (var reader = new CSVReader(dialect, new StringReader(input)))
 				{
+					reader.Open();
+
 					IsNotNull(reader.Headers);
 				}
 			}
@@ -392,6 +398,8 @@ namespace LibCSV.Tests
 			{
 				using (var reader = new CSVReader(dialect, new StringReader(input)))
 				{
+					reader.Open();
+
 					IsTrue(reader.Next());
 					IsFalse(reader.Next());
 				}
@@ -406,6 +414,8 @@ namespace LibCSV.Tests
 			{
 				using (var reader = new CSVReader(dialect, new StringReader(input)))
 				{
+					await reader.OpenAsync();
+
 					IsTrue(await reader.NextAsync());
 					IsFalse(await reader.NextAsync());
 				}

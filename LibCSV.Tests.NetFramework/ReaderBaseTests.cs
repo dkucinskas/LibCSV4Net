@@ -41,6 +41,8 @@ namespace LibCSV.Tests
 			IList<IList<object>> results = new List<IList<object>>();
 			using (var reader = new CSVReader(dialect, new StringReader(input)))
 			{
+				reader.Open();
+
 				while (reader.Next())
 				{
 					var record = reader.Current;
@@ -62,6 +64,8 @@ namespace LibCSV.Tests
 			IList<IList<object>> results = new List<IList<object>>();
 			using (var reader = new CSVReader(dialect, new StringReader(input)))
 			{
+				await reader.OpenAsync();
+
 				while (await reader.NextAsync())
 				{
 					var record = reader.Current;
